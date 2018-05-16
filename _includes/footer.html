@@ -1,0 +1,59 @@
+<footer class="text-muted">
+  <data class="u-url" href="{{ "/" | relative_url }}"></data>
+
+  <div class="container">
+    <div class="d-flex justify-content-between">
+      <p>{{- site.description | escape -}}</p>
+      <a href="{{ "/feed.xml" | relative_url }}" class="text-secondary muted-link">Subscribe</a>
+    </div>    
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/autocomplete.js/0.30.0/autocomplete.jquery.min.js"></script>
+
+  <script>      
+      var client = algoliasearch('{{ site.algolia.application_id }}', '{{ site.algolia.api_key }}');
+      var index = client.initIndex('{{ site.algolia.index_name }}');
+      $('#search-input').autocomplete({ 
+        hint: false,
+        minLength: 3,              
+        templates: {
+          empty: '<div>Artikel tidak ditemukan</div>',
+          footer: '<div class="branding text-center">Powered by <a href="https://www.algolia.com" class="text-muted muted-link">Algolia</a></div>'
+        }
+      }, [{
+        source: $.fn.autocomplete.sources.hits(index, { hitsPerPage: 5}),
+        displayKey: 'title',      
+        templates: {
+          suggestion: function(suggestion) {
+            return '<div class="result-title">' + suggestion._highlightResult.title.value + '</div><div class="result-snippet">' + suggestion._snippetResult.content.value + '</div>';
+          }
+        },
+        debounce: 500,
+      }]).on('autocomplete:selected', function(event, suggestion, dataset) {
+        window.location.href = suggestion.url;      
+      });
+
+      $('#search-input').focusin(function() {
+        $('#navbarSupportedContent').attr('style', 'display: none !important').addClass('flex-grow-0').removeClass('show');
+        $('#search-input-container').addClass('flex-grow-1');
+      }).focusout(function() {
+        $('#navbarSupportedContent').attr('style', '').removeClass('flex-grow-0');
+        $('#search-input-container').removeClass('flex-grow-1');
+      });
+
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js').then(function(registration) {                      
+            console.log('Service worker registered for the following scope: ', registration.scope);
+          }, function(err) {
+            console.error('Fail to register service worker', err);
+          });
+        });
+      } 
+  </script>
+
+</footer>

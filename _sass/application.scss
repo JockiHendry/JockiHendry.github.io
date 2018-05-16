@@ -1,0 +1,47 @@
+@import "syntax-highlighting";
+@import "algolia-autocomplete";
+
+main {
+	min-height: 70vh;
+}
+footer {
+	margin-top: 4rem;
+	padding: 4rem 0;
+	background-color: #f7f7f7;
+}
+
+nav.navbar.menu {
+	box-shadow: 0 6px 6px -6px #aaa;
+	margin-bottom: 2rem;
+}
+
+.navbar-brand {   
+	a {
+		color: rgba(255, 255, 255, 0.5);
+		&.active {
+			color: #fff;
+		}
+	}
+}
+
+.blog-post {
+	margin-bottom: 4rem;
+}
+
+a {
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+pre {
+	margin-bottom: 0px;
+}
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+.muted-link {	
+	&:hover {
+		text-decoration: underline;
+	}
+}

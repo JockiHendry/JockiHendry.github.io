@@ -1,0 +1,32 @@
+<div class="blog-post">
+  <h3>
+    <a class="post-link" href="{{ post.url | remove: '.html' | relative_url }}">
+      {{ post.title | escape }}
+    </a>
+  </h3>
+  {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+  <small class="post-meta text-muted">{{ post.date | date: date_format }}</small>
+  
+  {%- if site.show_excerpts -%}
+    {{ post.excerpt }}
+  {%- endif -%}
+
+  <div class="text-muted">
+    <p>
+      {% if post.category -%}      
+      <small class="mr-3">
+        Kategori: <a href="{{ '/category/' | append: post.category | relative_url }}">{{ post.category }}</a>
+      </small>
+      {%- endif -%}
+
+      {%- if post.tags.size > 0 -%}
+      <small>
+        Tags:
+        {% for tag in post.tags %}
+          <a href="{{ '/tag/' | append: tag | relative_url }}" class="mr-1">{{ tag }}</a>
+        {% endfor %}        
+      </small>
+      {%- endif -%}
+    </p>
+  </div>  
+</div>

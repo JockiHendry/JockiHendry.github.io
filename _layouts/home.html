@@ -1,0 +1,17 @@
+---
+layout: default
+---
+
+<div class="home">
+
+  {{ content }}
+
+  {%- if site.posts.size > 0 -%}
+
+    {%- for post in site.posts -%}
+      {%- include post-preview.html -%}
+    {%- endfor -%}
+  
+  {%- endif -%}
+
+</div>

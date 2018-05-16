@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark menu">
+  <div class="container flex-column flex-sm-row align-items-start">
+    <span class="navbar-brand"><a href="{{ '/' | relative_url }}" class="{%- if page.title == 'Home' -%} active {%- endif -%}">{{ site.title }}</a></span>
+    <button class="navbar-toggler my-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">        
+        <li class="nav-item">
+          <a class="nav-link {% if page.title == 'Pemograman' %} active {% endif %}" href="{{ '/category/Pemograman' | relative_url }}">Pemograman</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if page.title == 'DevOps' %} active {% endif %}" href="{{ '/category/DevOps' | relative_url }}">DevOps</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if page.title == 'OS' %} active {% endif %}" href="{{ '/category/OS' | relative_url }}">OS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if page.title == 'Network' %} active {% endif %}" href="{{ '/category/Network' | relative_url }}">Network</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if page.title == 'Tentang Saya' %} active {% endif %}" href="{{ '/about' | relative_url }}">Tentang Saya</a>
+        </li>        
+      </ul>        
+    </div>
+    <div id="search-input-container" class="flex-grow-0 align-self-stretch align-self-md-start">
+      <input class="form-control mr-sm-2 ml-auto" type="search" id="search-input" placeholder="Cari" aria-label="Search">      
+    </div>
+  </div>
+</nav>

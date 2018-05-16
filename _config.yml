@@ -1,1 +1,13 @@
-theme: jekyll-theme-cayman
+theme: "minima"
+title: "Catatan Jocki"
+description: "A Programmer's Journey"
+author: "Jocki Hendry"
+header_pages:
+  - about.md
+show_excerpts: true
+minima:
+  date_format: "%d %B %Y"
+algolia:
+  application_id: YEOKPMXOGN
+  index_name: jekyll
+  api_key: 153599d6841dcc7a67b62e1b8a1e6c3e

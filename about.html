@@ -1,0 +1,103 @@
+---
+layout: default
+title: Tentang Saya
+---
+
+<div class="container">
+	<div class="row mb-3">
+		<div class="card col-12 col-md mr-3 mb-3 mb-md-0 box-shadow">
+			<div class="card-body">
+				<h5 class="card-title">Siapa Saya</h5>
+				<p class="card-text">
+					Saya adalah seorang <em>full-stack software engineer</em> dengan <a href="https://en.wikipedia.org/wiki/T-shaped_skills" target="_blank">T-shaped skills</a>.  Fokus keahlian saya adalah pemograman <em>back-end</em>.
+				</p>
+				<blockquote class="blockquote text-center">
+					<p>When you think a problem is too complicated, break it down into many unrelated small problems.</p>
+					<p class="blockquote-footer">A painless troubleshooting by <cite>Jocki Hendry</cite></footer>
+				</blockquote>
+				<p class="card-text">
+					Dalam membuat software, saya selalu mulai dari hal paling sederhana.  Saya akan berusaha men-<em>demo</em>-kan prototype produk secepat mungkin guna mendapatkan <em>feedback</em>.  Saya akan mengulangi siklus ini berulang kali tanpa henti.
+				</p>
+				<p class="card-text">
+					Blog ini berisi kumpulan masalah yang saya jumpai dan solusinya. Saya <strong>tidak</strong> menyebarkan, mendukung, atau mengajarkan teknologi atau metodologi apapun.  Solusi saya mungkin bukan yang terbaik pada konteks yang berbeda.
+				</p>				
+			</div>
+		</div>	
+		<div class="card col-12 col-md-5 box-shadow">
+			<div class="card-body">
+				<h5 class="card-title">Keahlian Saya</h5>
+				<div id="category-container"></div>
+			</div>
+		</div>	
+	</div>
+	<div class="row">
+		<div class="card col-12 box-shadow">
+			<div class="card-body">		
+				<h5 class="card-title">Minat Saya</h5>
+				<div id="tags-cloud-container"></div>		
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{{ "/assets/wordcloud.js" | relative_url }}""></script>
+<script>
+	Highcharts.chart('category-container', {
+		series: [{
+			name: 'Jumlah Artikel',
+			colorByPoint: true,
+			data: [
+				{%- for category in site.categories -%}
+					{
+						name: '{{ category[0] }}',
+						y: {{ category[1].size }},
+					},
+				{%- endfor -%}
+			]
+		}],
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+			}
+		},
+		chart: {
+			type: 'pie',
+		},
+		title: {
+			text: '',
+		},
+		credits: {
+			enabled: false,
+		}
+	});
+
+	Highcharts.chart('tags-cloud-container', {		
+		series: [{
+			cursor: 'pointer',
+			events: {
+				click: function(event) {
+					if (event.point && event.point.name) {					
+						window.open("/tag/" + event.point.name, '_blank');	
+					}
+					
+				}
+			},
+			type: 'wordcloud',			
+			data: [			
+				{%- for tag in site.tags -%}
+					['{{ tag[0] }}', {{ tag[1].size }}],
+				{%- endfor -%}
+			],				
+			name: 'Jumlah Artikel',
+			placementStrategy: 'center',
+			spiral: 'archimedean'
+		}],	
+		title: {
+			text: '',
+		},
+		credits: {
+			enabled: false,
+		}
+	});
+</script>
