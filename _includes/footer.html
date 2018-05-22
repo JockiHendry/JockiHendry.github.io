@@ -4,7 +4,7 @@
   <div class="container">
     <div class="d-flex justify-content-between">
       <p>{{- site.description | escape -}}</p>
-      <a href="{{ "/feed.xml" | relative_url }}" class="text-secondary muted-link">Subscribe</a>
+      <a href="{{ "/feed.xml" | absolute_url }}" class="text-secondary muted-link">Subscribe</a>
     </div>    
   </div>
 
@@ -56,4 +56,4 @@
       } 
   </script>
 
-</footer>
+</footer> 
