@@ -1,9 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark menu">
   <div class="container flex-column flex-sm-row align-items-start">
-    <span class="navbar-brand"><a href="{{ '/' | relative_url }}" class="{%- if page.title == 'Home' -%} active {%- endif -%}">{{ site.title }}</a></span>
-    <button class="navbar-toggler my-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="align-self-stretch d-flex flex-row justify-content-between">
+      <span class="navbar-brand align-self-center"><a href="{{ '/' | relative_url }}" class="{%- if page.title == 'Home' -%} active {%- endif -%}">{{ site.title }}</a></span>
+      <button class="navbar-toggler my-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">        
@@ -24,6 +26,7 @@
         </li>        
       </ul>        
     </div>
+    
     <div id="search-input-container" class="flex-grow-0 align-self-stretch align-self-md-start">
       <input class="form-control mr-sm-2 ml-auto" type="search" id="search-input" placeholder="Cari" aria-label="Search">      
     </div>
