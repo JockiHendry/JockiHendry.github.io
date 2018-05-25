@@ -44,11 +44,3 @@ Pada keyboard saya, nilai `layout` adalah `us`.  Oleh sebab itu, saya akan mengu
 *Tips:  Jangan sampai salah mengubah file ini karena bisa menyebabkan OS tidak mau menerima masukan dari keyboard lagi.*
 
 Sekarang, setelah menjalankan ulang Ubuntu, tombol Scroll Lock kini dapat dipakai untuk menyalakan dan mematikan lampu keyboard seperti seharusnya.  Walaupun demikian, solusi ini tidak sempurna.  Saat melakukan upgrade Ubuntu, saya sering kali menjumpai perubahan yang saya lakukan pada file `us` sudah hilang sehingga saya harus mengulangi langkah dalam artikel ini kembali.
-
-Test Java:
-
-```java
-public static void main() {
-  System.out.println("test");
-}
-```
