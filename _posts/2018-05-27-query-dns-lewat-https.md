@@ -173,7 +173,7 @@ Berbeda dengan DNSCrypt, DoH lebih mudah dipakai diberbagai platform karena hamp
 			setValue("ip-address", json.ip);
 			return Promise.resolve(json.ip);
 		}).then(function(ip) {			
-			return jQuery.get("http://whois.arin.net/rest/ip/" + ip, {}, null,"json");
+			return jQuery.get("https://whois.arin.net/rest/ip/" + ip, {}, null,"json");
 		}).then(result => {				
 			setValue("organization", result.net.orgRef['@name']);						
 		});		
@@ -218,7 +218,7 @@ Berbeda dengan DNSCrypt, DoH lebih mudah dipakai diberbagai platform karena hamp
 			return Promise.resolve(ip);
 		}).then(ip => {
 			if (ip !== 'Not Found') {
-				return jQuery.get("http://whois.arin.net/rest/ip/" + ip, {}, null, "json");
+				return jQuery.get("https://whois.arin.net/rest/ip/" + ip, {}, null, "json");
 			} else {
 				return Promise.resolve(null);			
 			}
@@ -272,7 +272,7 @@ function refreshUserIP() {
 		setValue("ip-address", json.ip);
 		return Promise.resolve(json.ip);
 	}).then(function(ip) {			
-		return jQuery.get("http://whois.arin.net/rest/ip/" + ip, {}, null,"json");
+		return jQuery.get("https://whois.arin.net/rest/ip/" + ip, {}, null,"json");
 	}).then(result => {				
 		setValue("organization", result.net.orgRef['@name']);						
 	});		
@@ -317,7 +317,7 @@ function searchDomain(domainName) {
 		return Promise.resolve(ip);
 	}).then(ip => {
 		if (ip !== 'Not Found') {
-			return jQuery.get("http://whois.arin.net/rest/ip/" + ip, {}, null, "json");
+			return jQuery.get("https://whois.arin.net/rest/ip/" + ip, {}, null, "json");
 		} else {
 			return Promise.resolve(null);			
 		}
@@ -356,13 +356,13 @@ window.onload = function() {
 		<div id="penjelasan" class="collapse" data-parent="#accordion">
 			<div class="card-body">
 				<p>
-Tidak ada yang spesial pada kode program ini karena pada dasarnya saya hanya memanggil layanan yang sudah ada dengan <code>jQuery.get()</code> dan <code>jQuery.getJson()</code>.  Cukup lama rasanya sejak terakhir kali memakai jQuery :)  Selain itu, saya juga tidak berani memakai fitur ES2016 seperti keyword <code>const</code> dan string interpolation (dengan memakai tanda <em>backtick</em> sebagai pengganti kutip di string) karena tanpa batuan Babel atau TypeScript, tidak semua browser bisa menjalankan kode program yang sama.  Untuk animasi <em>spinner</em>, saya menggunakan CSS3 yang kode-nya saya ambil dari <a href="http://tobiasahlin.com/spinkit/">http://tobiasahlin.com/spinkit/</a>.
+Tidak ada yang spesial pada kode program ini karena pada dasarnya saya hanya memanggil layanan yang sudah ada dengan <code>jQuery.get()</code> dan <code>jQuery.getJson()</code>.  Cukup lama rasanya sejak terakhir kali memakai jQuery :)  Selain itu, saya juga tidak berani memakai fitur ES2016 seperti keyword <code>const</code> dan string interpolation (dengan memakai tanda <em>backtick</em> sebagai pengganti kutip di string) karena tanpa batuan Babel atau TypeScript, tidak semua browser bisa menjalankan kode program yang sama.  Untuk animasi <em>spinner</em>, saya menggunakan CSS3 yang kode-nya saya ambil dari <a href="https://tobiasahlin.com/spinkit/">https://tobiasahlin.com/spinkit/</a>.
 				</p>
 				<p>
-Untuk mendapatkan IP publik pengguna, saya memanggil <a href="https://api.ipify.org">https://api.ipify.org</a> yang akan mengembalikan JSONP.  Setelah itu, setelah mendapatkan IP publik, saya memanggil <a href="http://whois.arin.net/rest/ip/">http://whois.arin.net</a> guna mendapatkan informasi lebih lanjut mengenai IP tersebut.  Karena sudah terbiasa memakai <code>Promise</code> dan kebetulan hasil kembalian <code>jQuery.get()</code> dan <code>jQuery.getJson()</code> kompatibel dengan <code>Promise</code>, maka saya melakukan <em>chaining</em> <code>then</code> pada kode program.
+Untuk mendapatkan IP publik pengguna, saya memanggil <a href="https://api.ipify.org">https://api.ipify.org</a> yang akan mengembalikan JSONP.  Setelah itu, setelah mendapatkan IP publik, saya memanggil <a href="https://whois.arin.net/rest/ip/">https://whois.arin.net</a> guna mendapatkan informasi lebih lanjut mengenai IP tersebut.  Karena sudah terbiasa memakai <code>Promise</code> dan kebetulan hasil kembalian <code>jQuery.get()</code> dan <code>jQuery.getJson()</code> kompatibel dengan <code>Promise</code>, maka saya melakukan <em>chaining</em> <code>then</code> pada kode program.
 				</p>
 				<p>
-Untuk mendapatkan <em>IPv4 address</em> dari domain yang dimasukkan oleh pengguna, saya memanggil <a href="https://cloudflare-dns.com">https://cloudflare-dns.com/dns-query?ct=application/dns-json</a>.  Sama seperti sebelumnya, saya juga memanggil <a href="http://whois.arin.net/rest/ip/">http://whois.arin.net</a> untuk mendaftarkan informasi lebih lanjut mengenai IP yang ditemukan.  Selain itu, saya juga menggunakan Cloudflare DNS untuk mendapatkan record TXT dari <code>maxmind.test-ipv6.com</code> untuk memastikan bahwa <em>DNS resolver</em> yang bekerja adalah Cloudflare.  Sayang sekali browser tidak memungkinkan membuat socket UDP untuk alasan keamanan.  Seandainya saya pemograman socket di browser diperbolehkan, saya bisa menambahkan fasilitas lebih jauh seperti pemeriksaan <em>DNS spoofing</em> langsung dari browser.  Untuk mengakali keterbatasan ini, website pemeriksa <em>DNS spoofing</em> seperti <a href="https://dnsleaktest.com/">https://dnsleaktest.com/</a> membutuhkan sebuah <em>name server</em> khusus yang di-<em>hit</em> pada saat pengguna membuka situs tersebut.
+Untuk mendapatkan <em>IPv4 address</em> dari domain yang dimasukkan oleh pengguna, saya memanggil <a href="https://cloudflare-dns.com">https://cloudflare-dns.com/dns-query?ct=application/dns-json</a>.  Sama seperti sebelumnya, saya juga memanggil <a href="https://whois.arin.net/rest/ip/">https://whois.arin.net</a> untuk mendaftarkan informasi lebih lanjut mengenai IP yang ditemukan.  Selain itu, saya juga menggunakan Cloudflare DNS untuk mendapatkan record TXT dari <code>maxmind.test-ipv6.com</code> untuk memastikan bahwa <em>DNS resolver</em> yang bekerja adalah Cloudflare.  Sayang sekali browser tidak memungkinkan membuat socket UDP untuk alasan keamanan.  Seandainya saya pemograman socket di browser diperbolehkan, saya bisa menambahkan fasilitas lebih jauh seperti pemeriksaan <em>DNS spoofing</em> langsung dari browser.  Untuk mengakali keterbatasan ini, website pemeriksa <em>DNS spoofing</em> seperti <a href="https://dnsleaktest.com/">https://dnsleaktest.com/</a> membutuhkan sebuah <em>name server</em> khusus yang di-<em>hit</em> pada saat pengguna membuka situs tersebut.
 				</p>
 			</div>
 		</div>
