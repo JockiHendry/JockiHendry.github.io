@@ -6,6 +6,19 @@ layout: default
 
   {{ content }}
 
+  <div class="container mt-3 mb-5">
+  	<div class="row">	
+  		<div class="card col-3 box-shadow">
+		  	<div class="card-body">
+		  		<h5 class="card-title">DNS Tool</h5>
+		  		<p class="card-text">Cari tahu IP publik dan lakukan query DNS langsung dari browser</p>
+		  		<a href="{% post_url 2018-05-27-query-dns-lewat-https %}" class="card-link">Lihat Artikel</a>
+			</div>
+  		</div>
+	</div>
+  </div>
+  
+
   {%- if site.posts.size > 0 -%}
 
     {%- for post in site.posts -%}

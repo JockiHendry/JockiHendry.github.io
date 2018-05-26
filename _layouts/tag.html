@@ -2,10 +2,10 @@
 layout: default
 ---
 
-<div>
+<div class="mb-5">
 	<h3>Tag: <small>{{ page.tag }}</small></h3>
 
-	<p class="mb-4">{{ content }}</p>
+	<p>{{ content }}</p>
 </div>
 
 {%- if site.tags[page.tag] == null -%}

@@ -17,7 +17,7 @@ self.addEventListener('install', function(e) {
 			'{{ site.baseurl }}{{ file.path }}',		
 			{% endfor %}								
 			'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
-			'https://code.jquery.com/jquery-3.3.1.slim.min.js',
+			'https://code.jquery.com/jquery-3.3.1.min.js',
 			'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
 			'https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js',
 			'https://cdn.jsdelivr.net/autocomplete.js/0.30.0/autocomplete.jquery.min.js',

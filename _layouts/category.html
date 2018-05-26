@@ -2,10 +2,10 @@
 layout: default
 ---
 
-<div>
+<div class="mb-5">
 	<h3>Kategori: <small>{{ page.category }}</small></h3>
 
-	<p class="mb-4">{{ content }}</p>
+	<p>{{ content }}</p>
 </div>
 
 {%- if site.categories[page.category] == null -%}
