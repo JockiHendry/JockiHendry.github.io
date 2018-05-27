@@ -1,4 +1,5 @@
 theme: "minima"
+url: "https://blog.jocki.me"
 title: "Catatan Jocki"
 description: "A Programmer's Journey"
 author: "Jocki Hendry"
@@ -12,3 +13,6 @@ algolia:
   index_name: jekyll
   api_key: 153599d6841dcc7a67b62e1b8a1e6c3e
 google_analytics: UA-119671780-1
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
