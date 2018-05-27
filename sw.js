@@ -6,7 +6,7 @@ self.addEventListener('install', function(e) {
 	e.waitUntil(caches.open('blog-{{ site.github.build_revision }}').then(function(cache) {
 		return cache.addAll([
 			{% for page in site.pages %}
-			{%- if page.url != '/sw.js' -%} 
+			{%- if page.url != '/sw.js' and page.url != '/feed.xml' -%} 
 			'{{ page.url | remove: '.html' }}',
 			{%- endif -%}
 			{% endfor %}
