@@ -2,7 +2,7 @@
 layout: post
 category: Pemograman
 title: Memakai Service Worker Agar Website Berfungsi Saat Offline
-tags: [JavaScript, Jekyll]
+tags: [JavaScript, PWA, Jekyll]
 ---
 
 Walaupun situs ini adalah sebuah situs statis, saat mencobanya secara offline, saya menemukan sebuah masalah.  Setelah cache kadaluarsa, browser berusaha menarik file dari CDN seperti Bootstrap, Highcharts dan sebagainya.  Alangkah baiknya bila saya menyimpan file yang dibutuhkan secara permanen untuk dipakai secara offline.  Salah satu solusinya adalah dengan menggunakan Service Worker API yang biasanya identik dengan Progressive Web Apps.

@@ -2,9 +2,15 @@
   <data class="u-url" href="{{ "/" | relative_url }}"></data>
 
   <div class="container">
-    <div class="d-flex justify-content-between">
+    <div class="d-flex flex-column flex-md-row justify-content-between">
       <p>{{- site.description | escape -}}</p>
-      <a href="{{ "/feed.xml" | absolute_url }}" class="text-secondary muted-link">Subscribe</a>
+      <div>
+        <span id="menu-install" class="d-none">
+          <a id="btn-install" class="text-secondary muted-link" href="#">Install</a>
+          <span>&middot;</span>
+        </span>
+        <a href="{{ "/feed.xml" | relative_url }}" class="text-secondary muted-link">Subscribe</a>        
+      </div>
     </div>    
   </div>
 
@@ -54,7 +60,7 @@
       // Register service worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-          navigator.serviceWorker.register('/sw.js').then(function(registration) {                      
+          navigator.serviceWorker.register('/sw.js').then((registration) => {                      
             console.log('Service worker registered for the following scope: ', registration.scope);
             registration.addEventListener('updatefound', function() {
                 $("#update-toast").removeClass('d-none');              
@@ -63,6 +69,23 @@
             console.error('Fail to register service worker', err);
           });
         });
+
+        let deferredPrompt;                
+        window.addEventListener('beforeinstallprompt', (e) => {          
+          $("#menu-install").removeClass('d-none');
+          e.preventDefault();
+          deferredPrompt = e;          
+        });
+
+        $("#btn-install").click((e) => {
+          e.preventDefault();
+          $("#menu-install").hide();
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((result) => {
+            deferredPrompt = null;
+          });
+        });
+
       } 
   </script>
 
