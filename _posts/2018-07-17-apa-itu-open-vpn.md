@@ -33,29 +33,31 @@ openvpn --genkey --secret rahasia.key
 
 File `rahasia.key` yang dihasilkan nantinya bisa digunakan sebagai nilai untuk parameter `--secret`.  Walaupun sudah melakukan enkripsi, penggunaan *static key* seperti ini dianggap tidak optimal.  Bagaimana bila saat file ini dipindahkan dari *server* ke *client* (melalui *email*, *flash drive*, dan sejenisnya), pihak ketiga memperoleh salinannya?  Selain itu, bila pihak ketiga merekam seluruh komunikasi *client* dan *server* dari awal, bila ia berhasil memperoleh *static key* di kemudian hari, maka seluruh komunikasi yang telah terekam akan dapat dibaca.  Permasalahan ini disebabkan oleh kurangnya *perfect forward secrecy* (PFS).
 
-Metode enkripsi yang dianggap optimal untuk OpenVPN adalah dengan menggunakan PKI dan sertifikat digital.  Saya tidak perlu memperoleh *root certificate* secara resmi; saya bisa menggunakan proyek Easy-RSA untuk menghasilkan sertifikat yang dibutuhkan.  Saya memperoleh file installer Easy-RSA dari <https://github.com/OpenVPN/easy-rsa/releases>.  Setelah men-*extract* file tersebut, saya men-copy file `vars.example` menjadi `vars` dan melakukan perubahan pada nilai seperti `EASYRSA_REQ_COUNTRY`, `EASYRSA_REQ_PROVICE`, `EASYRSA_REQ_CITY`, `EASYRSA_REQ_ORG`, `EASYRSA_REQ_EMAIL`, dan `EASYRSA_REQ_OU`.  Setelah itu, saya memberikan perintah:
+Metode enkripsi yang dianggap optimal untuk OpenVPN adalah dengan menggunakan PKI dan sertifikat digital.  Saya tidak perlu memperoleh *root certificate* secara resmi; saya bisa menggunakan proyek Easy-RSA untuk menghasilkan sertifikat yang dibutuhkan.  Saya bisa men-*download* Easy-RSA dari <https://github.com/OpenVPN/easy-rsa/releases>.  Setelah men-*extract* file tersebut, saya men-copy file `vars.example` menjadi `vars` dan melakukan perubahan pada nilai seperti `EASYRSA_REQ_COUNTRY`, `EASYRSA_REQ_PROVICE`, `EASYRSA_REQ_CITY`, `EASYRSA_REQ_ORG`, `EASYRSA_REQ_EMAIL`, dan `EASYRSA_REQ_OU`.  Setelah itu, saya memberikan perintah:
 
 ```
 ./easyrsa init-pki
 ./easyrsa build-ca
 ```
 
-Perintah di atas akan sertifikat CA pada lokasi `pki/ca.crt`.  Sekarang, saatnya menghasilkan sertifikat untuk *server* dan *client* yang di-*sign* oleh sertifikat CA tersebut dengan perintah:
+Perintah di atas akan menghasilkan sertifikat CA pada lokasi `pki/ca.crt`.
+
+Sekarang, saatnya menghasilkan sertifikat untuk *server* dan *client* yang di-*sign* oleh sertifikat CA tersebut dengan perintah:
 
 ```
 ./easyrsa build-server-full server
 ./easyrsa build-client-full client
 ```
 
-Sekarang saya memiliki sertifikat untuk *server* di `pki/issued/server.crt` dan sertifikat untuk *client* di `pki/issued/client.crt`.
+Sertifikat untuk *server* akan dihasilkan di `pki/issued/server.crt` dan sertifikat untuk *client* dapat dijumpai di `pki/issued/client.crt`.
 
-Berikutnya, saya menghasilkan Diffie-Hellman (DH) key dengan memberikan perintah berikut ini:
+Berikutnya, saya membuat Diffie-Hellman (DH) key dengan memberikan perintah berikut ini:
 
 ```
 ./easyrsa gen-dh
 ```
 
-Karena konfigurasi untuk menggunakan sertifikat digital cukup banyak untuk diketik sebagai argumen, saya memilih membuat file konfigurasi OpenVPN dengan nama `server.ovpn` yang isinya seperti berikut ini:
+Karena argumen untuk menggunakan sertifikat digital cukup banyak untuk diketik, saya memilih membuat file konfigurasi OpenVPN dengan nama `server.ovpn` yang isinya seperti berikut ini:
 
 ```
 proto udp
@@ -73,13 +75,13 @@ cert /lokasi/ke/file/EasyRSA-3.0.4/pki/issued/server.crt
 key /lokasi/ke/file/EasyRSA-3.0.4/pki/private/server.key
 ```
 
-Saya kemudian bisa menjalankan OpenVPN disisi server dengan memberikan perintah berikut ini:
+Saya kemudian bisa menjalankan OpenVPN di-sisi server dengan memberikan perintah berikut ini:
 
 ```
 openvpn --config server.ovpn
 ```
 
-Sekarang, saatnya melakukan konfigurasi di sisi *client*.  Sebelumnya saya perlu men-copy sertifikat publik CA `ca.crt`, sertifikat publik *client* (`client.crt`) dan *private key*-nya (`client.key`) yang telah dihasilkan sebelumnya ke komputer *client*.  Sebagai contoh, saya bisa menggunakan perintah `scp` di Linux:
+Sekarang, saatnya melakukan konfigurasi di sisi *client*.  Sebelumnya, saya perlu men-copy sertifikat publik CA `ca.crt`, sertifikat publik *client* (`client.crt`) dan *private key* (`client.key`) yang telah dihasilkan sebelumnya ke komputer *client*.  Sebagai contoh, saya bisa menggunakan perintah `scp` di Linux:
 
 ```
 scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/ca.crt .
@@ -122,6 +124,6 @@ dan baris berikut ini pada `client.ovpn`:
 remote-cert-tls server
 ```
 
-Pada saat saya menggunakan perintah Easy-RSA `build-client-full` dan `build-server-full`, sertifikat yang dihasilkan memiliki atribut Extended Key Usage (EKU) yang menunjukkan bahwa sertifikat tersebut digunakan hanya untuk *client* atau hanya untuk *server*.  Konfigurasi `remote-cert-tls` menandakan bahwa OpenVPN harus memeriksa nilai EKU dari sertifikat.
+Pada saat saya menggunakan perintah Easy-RSA `build-client-full` dan `build-server-full`, sertifikat yang dihasilkan memiliki atribut Extended Key Usage (EKU) yang menunjukkan bahwa sertifikat tersebut digunakan hanya untuk *client* atau hanya untuk *server*.  Konfigurasi `remote-cert-tls` menandakan bahwa OpenVPN harus memeriksa nilai EKU dari sertifikat yang dipergunakan.
 
 Perlu di-ingat bahwa fasilitas enkripsi yang ditawarkan oleh OpenVPN adalah sebatas pada *tunnel* yang menghubungkan *client* ke *server*.  Bila *client* terhubung ke *server* melalui ISP, maka OpenVPN melindungi supaya ISP tidak bisa melihat atau mengubah komunikasi tersebut.  OpenVPN tidak akan melindungi data yang keluar dari *server* ke alamat Internet tujuan.  Dengan demikian, ISP yang dipakai oleh *server*  dapat melihat semua komunikasi dari *client*.  Membuat dan memakai *server* OpenVPN sendiri yang terhubung ke ISP terpercaya akan jauh lebih aman daripada memakai layanan OpenVPN dari pihak ketiga (terutama yang gratis!).
