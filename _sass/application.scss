@@ -1,6 +1,10 @@
 @import "syntax-highlighting";
 @import "algolia-autocomplete";
 
+body {
+	color: #545454;
+}
+
 main {
 	min-height: 70vh;
 }
