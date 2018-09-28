@@ -1,6 +1,6 @@
 ---
 layout: post
-category: DevOps
+category: Pemograman
 title: Tidak Ada Cara Yang Selalu Benar Dalam Membuat Software?
 tags: [SoftwareDevelopment]
 ---
