@@ -2,7 +2,7 @@
 layout: post
 category: DevOps
 title: Memakai Docker Compose Untuk AppEngine
-tags: [AppEngine, Docker]
+tags: [AppEngine, Docker, GoogleCloudPlatform]
 ---
 
 Pada suatu hari, saya menulis `README.md` berisi panduan bagi programmer untuk menjalankan aplikasi yang saya deploy di Google Cloud Platform.  Seperti layaknya aplikasi *microservices*, aplikasi tersebut terdiri atas proyek App Engine dan beberapa modul Cloud Functions.  Komunikasi antar *service* dilakukan melalui Cloud Pub/Sub. Database yang dipakai adalah MySQL dan Cloud Datastore.  Terdengar rumit, bukan?  Saya perlu memutar otak untuk menulis lebih dari dua paragraf guna menjelaskan langkah-langkah yang dibutuhkan untuk menjalankan aplikasi dari awal.  Ini masih belum termasuk peringatan seperti masalah emulator lokal Cloud Functions yang tidak mendukung Node 8 sementara Angular CLI terbaru mewajibkan minimal Node 8.  Apakah ada cara yang lebih singkat bagi programmer lain untuk menjalankan aplikasi ini di laptop barunya?

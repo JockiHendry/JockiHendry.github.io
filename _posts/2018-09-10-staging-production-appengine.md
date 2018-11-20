@@ -2,7 +2,7 @@
 layout: post
 category: DevOps
 title: Staging dan Production Dengan Konfigurasi Berbeda Di Proyek App Engine Yang Sama
-tags: [AppEngine]
+tags: [AppEngine, GoogleCloudPlatform]
 ---
 
 Saya sedang mengerjakan sebuah proyek yang di-*deploy* secara otomatis melalui *Continuous Integration (CI) pipeline* ke dua proyek Google App Engine yang berbeda.  *Deployment* pertama akan dipakai untuk keperluan *staging*.  Setelah fitur  di *staging* ini diuji menyeluruh oleh manusia, CI akan men-*deploy* kode program yang sama persis ke proyek Google App Engine lainnya.  Proyek kedua ini akan diakses oleh publik (disebut juga *production*).
