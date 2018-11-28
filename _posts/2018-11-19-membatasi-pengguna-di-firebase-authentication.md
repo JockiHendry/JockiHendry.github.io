@@ -80,13 +80,16 @@ export class AuthService {
   }
 
   get user(): Observable<User> {
-    return this.auth.authState;
+    return this.auth.user;
   }
 
-  isWhitelisted(user: User): Observable<boolean> {
-    return from(user.getIdTokenResult()).pipe(
+  isWhitelisted(): Observable<boolean> {
+    return this.user.pipe(
+      switchMap(user => {
+        return user ? from(user.getIdTokenResult()) : EMPTY;
+      }),
       map(idTokenResult => {
-        return !!idTokenResult.claims.whitelisted;
+        return idTokenResult.claims && !!idTokenResult.claims.whitelisted;
       })
     );
   }
