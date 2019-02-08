@@ -57,3 +57,13 @@ pre {
 .toast {
 	border-radius: 0 !important;
 }
+
+table {
+	td, th {
+		border: 1px solid black;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+	margin-bottom: 1rem;
+	margin-top: 1rem;
+}
