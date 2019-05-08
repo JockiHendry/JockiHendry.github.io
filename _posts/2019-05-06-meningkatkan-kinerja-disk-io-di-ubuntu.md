@@ -34,7 +34,27 @@ Berdasarkan *manual* yang ada, masing-masing kolom di hasil `iostat` memiliki ma
 * Nilai `svctm` tidak dipergunakan lagi.
 * `%util` adalah persentase waktu dimana perangkat HDD ini sibuk.  Semakin besar nilai ini menunjukkan HDD semakin sibuk.
 
-Pada hasil `iostat` yang saya peroleh, nilai `%wrqm` terlihat sangat tinggi!  Padahal, saya baru menjalankan IDE dan beberapa *server*.  Seharusnya tidak banyak operasi tulis yang terjadi.  Hal ini mungkin berhubungan dengan fasilitas *access time update* di *ext4 file system*.  Fitur ini akan memperbaharui nilai *last access* pada saat *file* dibaca, walaupun tidak ada perubahan pada isi *file*.  Karena IDE dan *development server* sering membaca *file* di direktori untuk mendeteksi perubahan, secara tidak langsung *access time update* menyebabkan permintaan tulis yang besar (untuk memperbaharui metadata waktu baca terakhir).  Tentu saja efek ini tidak diharapkan!
+Hasil `iostat` di atas tidak menunjukkan aktifitas I/O yang sibuk.  Penggunaan HDD hanya 31,3% saja.
+
+Kinerja yang diukur oleh `iostat` berhubungan dengan I/O scheduler di sistem operasi.  Setiap permintaan tulis dan baca tidak langsung di-*kirim* ke HDD melainkan ditampung dulu ke *queue*.  Mengapa demikian?  Karena HDD melibatkan sebuah *head* mekanis yang harus berpindah-pindah ke posisi yang ditentukan, semakin acak lokasi baca dan tulis, semakin sering juga waktu habis untuk perpindahan *head*.  I/O scheduler di sistem operasi akan melakukan operasi baca dan tulis ke HDD yang meminimalkan pergerakan *head*.  Selain itu, I/O scheduler juga bisa memberikan prioritas yang lebih tinggi pada pada *process* tertentu.
+
+Karena tidak ada satu Ubuntu menyediakan beberapa pilihan I/O scheduler.Untuk melihat I/O scheduler yang sedang aktif di Ubuntu, saya bisa memberikan perintah berikut ini:
+
+> $ <strong>cat /sys/block/sda/queue/scheduler</strong>
+
+```
+noop deadline [cfq]
+```
+
+Pada hasil di atas, terlihat bahwa sistem operasi menyediakan pilihan I/O scheduler berupa `noop`, `deadline` dan `cfg`.  Yang sedang aktif adalah `cfg`.  Pada kernel yang terbaru yang menggunakan *multi queue*, saya akan menemukan pilihan seperti `none` dan `mq-deadline`.
+
+Untuk mengubah I/O scheduler yang sedang aktif, saya bisa memberikan perintah seperti:
+
+> $ <strong>echo deadline | sudo tee /sys/block/sda/queue/scheduler</strong>
+
+Perintah di atas akan mengubah I/O scheduler yang aktif dari `cfg` menjadi `deadline`.  Untuk mengukur efek dari pengaturan yang saya lakukan, tidak cara yang lebih baik selain mencoba menggunakan sistem operasi tersebut sehari-hari.  Ada beberapa hal yang tidak cukup ditunjukkan dengan angka.  Sebagai contoh, saat saya mencoba mengganti penggunaan I/O scheduler dari `mq-deadline` menjadi `none`, saya menemukan bahwa kecepatan meningkat secara drastis di aplikasi *benchmark*.  Akan tetapi, efek sampingnya adalah aplikasi terasi menjadi lebih sering diam menunggu.
+
+Salah satu fitur yang paling sering dimatikan untuk peningkatan Disk I/O adalah *access time update* yang dipakai oleh *ext4 file system*.   Fitur ini akan memperbaharui nilai *last access* pada saat *file* dibaca, walaupun tidak ada perubahan pada isi *file*.  Karena IDE dan *development server* sering membaca *file* di direktori untuk mendeteksi perubahan, secara tidak langsung *access time update* menyebabkan permintaan tulis yang besar (untuk memperbaharui metadata waktu baca terakhir).  Tentu saja efek ini tidak diharapkan!
 
 Untuk mematikan fitur *access time update* di ext4, saya akan mengubah file `/etc/fstab` dan menambahkan pengaturan `noatime` di HDD yang saya pakai, seperti yang terlihat di baris berikut ini:
 
@@ -44,19 +64,6 @@ UUID=xxx /               ext4    errors=remount-ro,<strong>noatime</strong> 0   
 </pre>
 >
 
-Setelah menjalankan ulang komputer, saya mencoba menjalankan kembali `iostat` setelah mensimulasikan pekerjaan sehari-hari saya.  Kali ini saya memperoleh hasil seperti berikut ini:
-
-> $ <strong>iostat -xdh /dev/sda</strong>
-
-```
-Linux 5.0.0-13-generic 	06/05/19 	_x86_64_	(4 CPU)
-
-     r/s     w/s     rkB/s     wkB/s   rrqm/s   wrqm/s  %rrqm  %wrqm r_await w_await aqu-sz rareq-sz wareq-sz  svctm  %util Device
-  161,01    9,06      3,5M    453,4k    61,63     7,07  27,7%  43,8%    9,43    9,12   1,37    22,4k    50,0k   2,09  35,6% sda
-```
-
-Kali ini nilai `%wrqm` tidak begitu tinggi lagi!  Selain itu, tanpa harus melihat statistik, saya juga bisa merasakan sendiri perubahannya saat bekerja.  IDE terasa lebih reponsif dibandingkan sebelumnya.
-
 Pengaturan lain yang sering direkomendasikan adalah `commit`.  Nilai *default* 5 detik menunjukkan bahwa terjadi *full sync* dari seluruh data di memori ke HDD setiap 5 detik.  Dengan mengubah nilai ini menjadi lebih besar, Linux akan lebih jarang menulis ke HDD sehingga kinerja akan terasa lebih cepat.  Sebagai gantinya, bila terjadi kerusakan dan pemadaman listrik tak terduga, maka data selama nilai `commit` terakhir akan hilang selamanya.  Ini adalah contoh mengorbankan konsistensi demi kinerja.  Saya bisa mengatur nilai `commit` dengan menambahkannya di `/etc/fstab` seperti yang terlihat pada baris berikut ini:
 
 >
@@ -65,4 +72,32 @@ UUID=xxx /               ext4    errors=remount-ro,noatime,<strong>commit=30</st
 </pre>
 >
 
-Untuk mengukur efek dari pengaturan yang saya lakukan, tidak cara yang lebih baik selain mencoba menggunakan sistem operasi tersebut sehari-hari.  Ada beberapa hal yang tidak cukup ditunjukkan dengan angka.  Sebagai contoh, saat saya mencoba mengganti penggunaan I/O scheduler dari `mq-deadline` menjadi `none`, saya menemukan bahwa kecepatan meningkat secara drastis di aplikasi *benchmark*.  Akan tetapi, efek sampingnya adalah aplikasi menjadi lebih sering diam menunggu.
+Setelah melihat I/O scheduler dan *file system* yang merupakan pengaturan di sisi sistem operasi, kali ini saya akan mencoba melihat pengaturan yang berhubungan dengan perangkat HDD itu sendiri. Tool `hdparm` akan sangat berguna disini.  Sebagai contoh, saya bisa melihat kecepatan baca HDD secara langsung (mengabaikan *page cache*) dengan menggunakan perintah seperti berikut ini:
+
+> $ <strong>sudo hdparm -t --direct /dev/sda</strong>
+
+```
+/dev/sda:
+ Timing O_DIRECT disk reads: 360 MB in  3.01 seconds = 119.68 MB/sec
+```
+
+Untuk melihat kecepatan tulis HDD, saya bisa mencoba menggunakan perintah `dd` seperti berikut ini:
+
+
+> $ <strong>dd if=/dev/zero of=test.img bs=1G count=1 oflag=dsync</strong>
+
+```
+1+0 records in
+1+0 records out
+1073741824 bytes (1,1 GB, 1,0 GiB) copied, 11,1324 s, 96,5 MB/s
+```
+
+Pada hasil di atas, terlihat bahwa kecepatan tulis di HDD yang saya pakai adalah 96,5 MB/s.  Untuk meningkatkan kinerja tulis, saya perlu memastikan bahwa fitur *write caching* di HDD aktif.  Berbeda dengan *page cache* dari sistem operasi, HDD juga memiliki *cache* internal di dalam perangkatnya.  Secara default, fasilitas ini selalu aktif.  Akan tetapi, bila belum aktif, saya juga bisa mengaktifkannya dengan memberikan perintah seperti berikut ini:
+
+> $ <strong>sudo hdparm -W1 /dev/sda</strong>
+
+```
+/dev/sda:
+ setting drive write-caching to 1 (on)
+ write-caching =  1 (on)
+```
