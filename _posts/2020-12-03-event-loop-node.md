@@ -414,9 +414,8 @@ Solusi lain untuk mengatasi pemblokiran *event loop* adalah dengan menggunakan [
 saya akan mengubah kode program Node.js saya menjadi seperti berikut ini:
 
 ```typescript
-import {EventEmitter} from 'events';
 import {PubSub} from '@google-cloud/pubsub';
-import {isMainThread, Worker, workerData, parentPort} from 'worker_threads';
+import {isMainThread, Worker, workerData} from 'worker_threads';
 
 const pubsub = new PubSub();
 const topic = pubsub.topic('test', {
@@ -439,132 +438,80 @@ function start(workerId: string) {
         console.log(`[${new Date().toLocaleString()}][${workerId}] Iterasi ${iterationNumber}`);
         await publishEvent(workerId, iterationNumber);
         if (workerId === 'worker1') {
-            const worker = new Worker(__filename, {workerData: {workerId, iterationNumber}});
-            worker.on('message', (hasil) => {
-                console.log(`[${new Date().toLocaleString()}][${workerId}] Hasil [${iterationNumber}] adalah ${hasil}`);
-            });
+            for (let a = 0; a < 9999999999; a++);
         }
     }, 1000);
 }
 
 async function main() {
-    const emitter = new EventEmitter();
-    emitter.on('start', async workerId => {
-        start(workerId);
-    });
-    emitter.emit('start', 'worker1');
-    emitter.emit('start', 'worker2');
-
+    new Worker(__filename, {workerData: 'worker1'});
+    new Worker(__filename, {workerData: 'worker2'});
 }
 
 if (isMainThread) {
     main().then(() => 'Mulai').catch(err => console.error(err));
     setInterval(() => console.log(`[${new Date().toLocaleString()}] Tick!`), 1000);
 } else {
-    console.log(`[${new Date().toLocaleString()}][${workerData.workerId}] Iterasi ${workerData.iterationNumber} Proses lambat dimulai!`);
-    let i = 0;
-    for (; i < 9999999999; i++);
-    console.log(`[${new Date().toLocaleString()}][${workerData.workerId}] Iterasi ${workerData.iterationNumber} Proses lambat selesai!`);
-    parentPort.postMessage(i);
+    start(workerData);    
 }
 ```
 
 Hasil eksekusinya akan terlihat seperti:
 
 ```
-[00:41:37][worker1] Iterasi 1
-[00:41:37][worker1] Mengirim pesan [1] ke PubSub
-[00:41:37][worker2] Iterasi 1
-[00:41:37][worker2] Mengirim pesan [1] ke PubSub
-[00:41:37] Tick!
-[00:41:37][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:37][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:37][worker1] Iterasi 1 Proses lambat dimulai!
-[00:41:38][worker1] Iterasi 2
-[00:41:38][worker1] Mengirim pesan [2] ke PubSub
-[00:41:38][worker2] Iterasi 2
-[00:41:38][worker2] Mengirim pesan [2] ke PubSub
-[00:41:38] Tick!
-[00:41:38][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:38][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:38][worker1] Iterasi 2 Proses lambat dimulai!
-[00:41:39][worker1] Iterasi 3
-[00:41:39][worker1] Mengirim pesan [3] ke PubSub
-[00:41:39][worker2] Iterasi 3
-[00:41:39][worker2] Mengirim pesan [3] ke PubSub
-[00:41:39] Tick!
-[00:41:39][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:39][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:39][worker1] Iterasi 3 Proses lambat dimulai!
-[00:41:40][worker1] Iterasi 4
-[00:41:40][worker1] Mengirim pesan [4] ke PubSub
-[00:41:40][worker2] Iterasi 4
-[00:41:40][worker2] Mengirim pesan [4] ke PubSub
-[00:41:40] Tick!
-[00:41:40][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:40][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:40][worker1] Iterasi 4 Proses lambat dimulai!
-[00:41:41][worker1] Iterasi 5
-[00:41:41][worker1] Mengirim pesan [5] ke PubSub
-[00:41:41][worker2] Iterasi 5
-[00:41:41][worker2] Mengirim pesan [5] ke PubSub
-[00:41:41] Tick!
-[00:41:41][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:41][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:41][worker1] Iterasi 5 Proses lambat dimulai!
-[00:41:42][worker1] Iterasi 6
-[00:41:42][worker1] Mengirim pesan [6] ke PubSub
-[00:41:42][worker2] Iterasi 6
-[00:41:42][worker2] Mengirim pesan [6] ke PubSub
-[00:41:42] Tick!
-[00:41:42][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:42][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:42][worker1] Iterasi 6 Proses lambat dimulai!
-[00:41:43][worker1] Iterasi 7
-[00:41:43][worker1] Mengirim pesan [7] ke PubSub
-[00:41:43][worker2] Iterasi 7
-[00:41:43][worker2] Mengirim pesan [7] ke PubSub
-[00:41:43] Tick!
-[00:41:43][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:43][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:43][worker1] Iterasi 7 Proses lambat dimulai!
-[00:41:44][worker1] Iterasi 8
-[00:41:44][worker1] Mengirim pesan [8] ke PubSub
-[00:41:44][worker2] Iterasi 8
-[00:41:44][worker2] Mengirim pesan [8] ke PubSub
-[00:41:44] Tick!
-[00:41:44][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:44][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:44][worker1] Iterasi 8 Proses lambat dimulai!
-[00:41:44][worker1] Hasil [1] adalah 9999999999
-[00:41:44][worker1] Iterasi 1 Proses lambat selesai!
-[00:41:45][worker1] Iterasi 9
-[00:41:45][worker1] Mengirim pesan [9] ke PubSub
-[00:41:45][worker2] Iterasi 9
-[00:41:45][worker2] Mengirim pesan [9] ke PubSub
-[00:41:45] Tick!
-[00:41:45][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:45][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:45][worker1] Iterasi 9 Proses lambat dimulai!
-[00:41:45][worker1] Hasil [2] adalah 9999999999
-[00:41:45][worker1] Iterasi 2 Proses lambat selesai!
-[00:41:46][worker1] Iterasi 10
-[00:41:46][worker1] Mengirim pesan [10] ke PubSub
-[00:41:46][worker2] Iterasi 10
-[00:41:46][worker2] Mengirim pesan [10] ke PubSub
-[00:41:46] Tick!
-[00:41:46][worker1] Pesan berhasil dikirim ke PubSub
-[00:41:46][worker2] Pesan berhasil dikirim ke PubSub
-[00:41:46][worker1] Iterasi 10 Proses lambat dimulai!
-[00:41:46][worker1] Hasil [3] adalah 9999999999
-[00:41:46][worker1] Iterasi 3 Proses lambat selesai!
+[00:35:26] Tick!
+[00:35:26][worker1] Iterasi 1
+[00:35:26][worker1] Mengirim pesan [1] ke PubSub
+[00:35:26][worker2] Iterasi 1
+[00:35:26][worker2] Mengirim pesan [1] ke PubSub
+[00:35:26][worker1] Pesan berhasil dikirim ke PubSub
+[00:35:26][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:27] Tick!
+[00:35:27][worker2] Iterasi 2
+[00:35:27][worker2] Mengirim pesan [2] ke PubSub
+[00:35:27][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:28] Tick!
+[00:35:28][worker2] Iterasi 3
+[00:35:28][worker2] Mengirim pesan [3] ke PubSub
+[00:35:28][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:29] Tick!
+[00:35:29][worker2] Iterasi 4
+[00:35:29][worker2] Mengirim pesan [4] ke PubSub
+[00:35:29][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:30] Tick!
+[00:35:30][worker2] Iterasi 5
+[00:35:30][worker2] Mengirim pesan [5] ke PubSub
+[00:35:30][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:31] Tick!
+[00:35:31][worker2] Iterasi 6
+[00:35:31][worker2] Mengirim pesan [6] ke PubSub
+[00:35:31][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:32] Tick!
+[00:35:32][worker2] Iterasi 7
+[00:35:32][worker2] Mengirim pesan [7] ke PubSub
+[00:35:32][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:33] Tick!
+[00:35:33][worker2] Iterasi 8
+[00:35:33][worker2] Mengirim pesan [8] ke PubSub
+[00:35:33][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:33][worker1] Iterasi 2
+[00:35:33][worker1] Mengirim pesan [2] ke PubSub
+[00:35:33][worker1] Pesan berhasil dikirim ke PubSub
+[00:35:34] Tick!
+[00:35:34][worker2] Iterasi 9
+[00:35:34][worker2] Mengirim pesan [9] ke PubSub
+[00:35:34][worker2] Pesan berhasil dikirim ke PubSub
+[00:35:35] Tick!
+[00:35:35][worker2] Iterasi 10
+[00:35:35][worker2] Mengirim pesan [10] ke PubSub
+[00:35:35][worker2] Pesan berhasil dikirim ke PubSub
 ```
 
-Kali ini `worker1` dan `worker2` bekerja hampir setiap detik.  Juga tidak ada masalah keterlambatan lagi dalam pengiriman 
-pesan ke PubSub.  Yang berbeda adalah operasi lambat di `worker1` kini tidak lagi mem-blokir eksekusi dan sudah sepenuhnya 
-*asynchronous*.  Sebagai contoh, hasil perhitungan untuk iterasi pertama baru muncul 6 detik setelah operasi untuk iterasi 
- tersebut selesai dikerjakan.
+Kali ini `worker2` tetap bekerja walaupun `worker1` sedang sibuk bekerja hampir setiap detik.  Juga tidak ada masalah keterlambatan 
+lagi dalam pengiriman pesan ke PubSub untuk `worker2`.  Tentu saja `worker1` tetap lambat karena saya sengaja menambahkan
+ perulangan yang lama.  Iterasi ke dua-nya baru muncul pada detik ke-7 (dimana `worker2` sudah mencapai iterasi ke-8).
  
-Walaupun *worker thread* membuat *thread* baru, pengalaman memakainya memiliki rasa yang sangat berbeda dari model pemograman *multi-threaded* 
-di bahasa seperti Java.  Saya juga tetap harus berhati-hati agar tidak memblokir *event loop* di Node.js walaupun sudah ada *worker thread*. 
-Oleh sebab itu, secara garis besar, Node.js tetap masuk dalam kategori *single-threaded*.
+Walaupun *worker thread* membuat *thread* baru, pengalaman memakainya memiliki rasa yang sangat berbeda dari model 
+pemograman *multi-threaded* di bahasa seperti Java.  Saya juga tetap harus berhati-hati agar tidak memblokir *event loop* 
+di Node.js walaupun sudah ada *worker thread*. Oleh sebab itu, secara garis besar, Node.js tetap masuk dalam 
+kategori *single-threaded*.
