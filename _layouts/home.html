@@ -4,24 +4,34 @@ layout: default
 
 <div class="home">
 
-  {{ content }}
+    {{ content }}
 
-  <div class="d-flex flex-column flex-md-row mt-3 mb-5">  	
-		<div class="card box-shadow pinned-card">
-	  	<div class="card-body">
-	  		<h5 class="card-title">DNS Tool</h5>
-	  		<p class="card-text">Cari tahu IP publik dan lakukan query DNS langsung dari browser</p>
-	  		<a href="{% post_url 2018-05-27-query-dns-lewat-https %}" class="card-link">Lihat Artikel</a>
-		  </div>  		
-    </div>
-	</div>  
+    {%- if paginator.posts.size > 0 -%}
 
-  {%- if site.posts.size > 0 -%}
+        {%- for post in paginator.posts -%}
+          {%- include post-preview.html -%}
+        {%- endfor -%}
 
-    {%- for post in site.posts -%}
-      {%- include post-preview.html -%}
-    {%- endfor -%}
-  
-  {%- endif -%}
+    {%- endif -%}
+
+
+    <nav>
+        <ul class="pagination pagination-sm">
+            <li class="page-item {% unless paginator.previous_page %}disabled{% endunless %}"><a class="page-link" href="{{ paginator.previous_page_path }}">Previous</a></li>
+            {% for i in (1..paginator.total_pages) %}
+                <li class="page-item {% if i == paginator.page %}active{% endif %}">
+                    {% if i == paginator.page %}
+                        <a class="page-link" href="#">{{ i }}</a>
+                    {% elsif i == 1 %}
+                        <a class="page-link" href="{{ '/' | relative_url }}">{{ i }}</a>
+                    {% else %}
+                        <a class="page-link" href="{{ site.paginate_path | relative_url | replace: ':num', i }}">{{ i }}</a>
+                    {% endif %}
+
+                </li>
+            {% endfor %}
+            <li class="page-item {% unless paginator.next_page %}disabled{% endunless %}"><a class="page-link" href="{{ paginator.next_page_path }}">Next</a></li>
+        </ul>
+    </nav>
 
 </div>
