@@ -2,7 +2,7 @@
 layout: post
 category: Pemograman
 title: Memakai Google BigQuery Untuk Laporan Inventory FIFO
-tags: [GoogleCloudPlatform, FirebaseFunction]
+tags: [BigQuery, GoogleCloudPlatform, FirebaseFunction]
 ---
 
 Menghitung data untuk laporan inventory berbasis FIFO sebenarnya tidak kompleks.  Saya hanya perlu mengetahui jumlah item yang tersisa, lalu mencari transaksi pembelian dan retur terbaru hingga mencapai nilai jumlah item tersisa.  Sama sekali tidak perlu menghitung penjualan dan transaksi lainnya dari awal.  Sebagai contoh, karena pada awalnya saya menggunakan Firestore, saya bisa membuat sebuah *function* seperti berikut ini untuk mendapatkan pembelian dan retur hingga jumlah item tersisa:

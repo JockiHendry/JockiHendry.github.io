@@ -2,7 +2,7 @@
 layout: post
 category: Pemograman
 title: Menggunakan Array Di Google BigQuery
-tags: [GoogleCloudPlatform]
+tags: [BigQuery, GoogleCloudPlatform]
 ---
 
 Salah satu cara untuk mendapatkan hasil query lebih cepat di BigQuery adalah dengan melakukan denormalisasi dengan menggunakan tipe data `ARRAY`. 
