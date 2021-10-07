@@ -14,13 +14,6 @@
     </div>    
   </div>
 
-  <div id="update-toast" class="toast alert alert-info fixed-bottom box-shadow d-none" role="alert">
-      Ada artikel baru yang ditambahkan pada blog ini.  <a href="{{ '/' | relative_url }}">Klik disini untuk melihatnya</a>.
-      <button type="button" class="close" data-dismiss="alert" arial-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-  </div>
-
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
@@ -62,9 +55,6 @@
         window.addEventListener('load', function () {
           navigator.serviceWorker.register('/sw.js').then((registration) => {                      
             console.log('Service worker registered for the following scope: ', registration.scope);
-            registration.addEventListener('updatefound', function() {
-                $("#update-toast").removeClass('d-none');              
-            });          
           }, function(err) {
             console.error('Fail to register service worker', err);
           });

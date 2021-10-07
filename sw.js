@@ -1,45 +1,71 @@
 ---
 ---
 
-self.addEventListener('install', function(e) {	
-	self.skipWaiting();
-	e.waitUntil(caches.open('blog-{{ site.github.build_revision }}').then(function(cache) {
-		return cache.addAll([
-			{% for page in site.pages %}
-			{%- if page.url != '/sw.js' and page.url != '/feed.xml' -%} 
-			'{{ page.url | remove: '.html' }}',
-			{%- endif -%}
-			{% endfor %}
-			{% for post in site.posts %}			
-			'{{ post.url | remove: '.html' }}',			
-			{% endfor %}
-			{% for file in site.static_files %}				
-			'{{ site.baseurl }}{{ file.path }}',		
-			{% endfor %}								
-			'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
-			'https://code.jquery.com/jquery-3.3.1.min.js',
-			'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
-			'https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js',
-			'https://cdn.jsdelivr.net/autocomplete.js/0.30.0/autocomplete.jquery.min.js',
-			'https://code.highcharts.com/highcharts.js',			
-		]);
-	}));
+const install = async () => {
+	const cache = await caches.open('blog-{{ site.github.build_revision }}');
+	const requests = [
+		{% for page in site.pages %}
+		{%- if page.url != '/sw.js' and page.url != '/feed.xml' -%}
+		'{{ page.url | remove: '.html' }}',
+		{%- endif -%}
+		{% endfor %}
+		{% for post in site.posts %}
+		'{{ post.url | remove: '.html' }}',
+		{% endfor %}
+		{% for file in site.static_files %}
+		'{{ site.baseurl }}{{ file.path }}',
+		{% endfor %}
+		'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
+		'https://code.jquery.com/jquery-3.3.1.min.js',
+		'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
+		'https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js',
+		'https://cdn.jsdelivr.net/autocomplete.js/0.30.0/autocomplete.jquery.min.js',
+		'https://code.highcharts.com/highcharts.js',
+	];
+	const keys = await caches.keys();
+	const remaingRequests = requests.filter(r => !keys.includes(r));
+	await cache.addAll(remaingRequests);
+}
+
+const activate = async () => {
+	const oldCaches = (await caches.keys()).filter((c) => c !== 'blog-{{ site.github.build_revision }}');
+	for (const oldCache of oldCaches) {
+		console.log(`Deleting old service worker: ${oldCache}`);
+		await caches.delete(oldCache);
+	}
+}
+
+const fetch = async (request) => {
+	if (request.method === 'GET') {
+		const cache = await caches.open('blog-{{ site.github.build_revision }}');
+		let matchedResponse = await cache.match(request);
+		if (matchedResponse) {
+			return matchedResponse;
+		}
+		const withSlash = await cache.match(new Request(`${request.url}/`, {method: 'GET', headers: request.headers}));
+		if (withSlash) {
+			return withSlash;
+		}
+	}
+	const newResponse = await fetch(request);
+	if (!newResponse || newResponse.status !== 200 || newResponse.type !== 'basic' || request.method !== 'GET') {
+		return newResponse;
+	}
+	console.log(`Caching new request: `, request);
+	await cache.put(request, newResponse.clone());
+	return newResponse;
+}
+
+self.addEventListener('install', (e) => {
+	console.log('Installing service worker');
+	e.waitUntil(install());
 });
 
-self.addEventListener('activate', function(e) {
-	e.waitUntil(caches.keys().then(function(cacheNames) {
-		return Promise.all(
-			cacheNames.map(function(cacheName) {
-				if (cacheName != 'blog-{{ site.github.build_revision }}') {
-					return caches.delete(cacheName);
-				}
-			})
-		);
-	}));
+self.addEventListener('activate', (e) => {
+	console.log(`Service worker has been activated`);
+	e.waitUntil(activate());
 });
 
-self.addEventListener('fetch', function(e) {
-	e.respondWith(caches.match(e.request).then(function(response) {		
-		return response || fetch(e.request);
-	}));
+self.addEventListener('fetch', (e) => {
+	e.respondWith(fetch(e.request));
 });
