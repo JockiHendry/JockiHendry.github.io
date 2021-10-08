@@ -53,6 +53,7 @@ const fetch = async (request) => {
 self.addEventListener('install', (e) => {
 	console.log('Installing service worker');
 	e.waitUntil(install());
+	self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
