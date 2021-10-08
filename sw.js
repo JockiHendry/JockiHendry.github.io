@@ -29,9 +29,9 @@ const activate = async () => {
 	}
 }
 
-const fetch = async (request) => {
+const fetchCache = async (request) => {
+	const cache = await caches.open('blog-{{ site.github.build_revision }}');
 	if (request.method === 'GET') {
-		const cache = await caches.open('blog-{{ site.github.build_revision }}');
 		let matchedResponse = await cache.match(request);
 		if (matchedResponse) {
 			return matchedResponse;
@@ -42,10 +42,9 @@ const fetch = async (request) => {
 		}
 	}
 	const newResponse = await fetch(request);
-	if (!newResponse || newResponse.status !== 200 || newResponse.type !== 'basic' || request.method !== 'GET') {
+	if (!newResponse || newResponse.status > 200 || request.method !== 'GET') {
 		return newResponse;
 	}
-	console.log(`Caching new request: `, request);
 	await cache.put(request, newResponse.clone());
 	return newResponse;
 }
@@ -62,5 +61,5 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-	e.respondWith(fetch(e.request));
+	e.respondWith(fetchCache(e.request));
 });
