@@ -1,6 +1,6 @@
 ---
 layout: post
-category: Pemograman
+category: Network
 title: Melakukan Query DNS Lewat HTTPS
 tags: [JavaScript, DNS]
 ---

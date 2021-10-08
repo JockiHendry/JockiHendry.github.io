@@ -9,7 +9,7 @@ Setiap perangkat yang terhubung di *router* yang sama dapat berkomunikasi satu d
 
 Sebagai contoh, saya akan melakukan pemisahan jaringan pada *router* rumahan saya yang menggunakan sistem operasi OpenWRT.  Saya akan mulai dengan melakukan SSH ke *router* sebagai user `root`:
 
-> $ <strong>ssh root@192.168.1.1</strong>
+> <strong>$</strong> <code>ssh root@192.168.1.1</code>
 
 Secara garis besar, saya akan melakukan partisi untuk komunikasi sesama perangkat yang terhubung melalui WiFi, komunikasi sesama perangkat yang terhubung melalui LAN, dan komunikasi antar perangkat yang terhubung melalui WiFi dan LAN.
 
@@ -38,7 +38,7 @@ config wifi-iface 'wifinet2'
 
 Pada konfigurasi di atas, perangkat *router* saya menyediakan dua SSID berbeda: `Jocki1` dan `Jocki2`.  Saya menambahkan `option isolate 1` ke masing-masing SSID tersebut.  Setelah itu, saya memberikan perintah berikut ini agar perubahan file tersebut diaplikasikan:
 
-> $ <strong>service network reload</strong>
+> <strong>$</strong> <code>service network reload</code>
 
 Sekarang, perangkat yang terhubung melalui WiFi ke SSID yang sama tidak akan bisa berkomunikasi.  Sebagai contoh, bila perangkat A terhubung ke SSID `Jocki1` dan perangkat B terhubung ke SSID `Jocki1`, maka perangkat A tidak dapat berkomunikasi dengan perangkat B.  Begitu juga dengan perangkat C yang terhubung ke SSID `Jocki2` dan perangkat D yang terhubung ke SSID `Jocki2`, perangkat C tidak akan bisa berkomunikasi dengan perangkat D.  Namun, perlu diingat bahwa AP Isolation hanya bekerja di SSID yang sama.  Perangkat A akan bisa berkomunikasi dengan perangkat C, begitu juga dengan perangkat B yang bisa berkomunikasi dengan perangkat D, karena mereka terhubung ke SSID yang berbeda!
 
@@ -62,9 +62,9 @@ config interface 'wifi2'
 
 Kemudian, pada file `/etc/config/wireless`, saya mengubah nilai `network` dari `'lan'` menjadi `'wifi2'` (nama *interface* baru) untuk *wifi-iface* SSID `Jocki2`.  Selain dengan mengubah file secara langsung, saya juga bisa memodifikasi file tersebut dengan menggunakan perintah `uci` seperti:
 
-> $ <strong>uci set wireless.@wifi-iface[2].network=wifi2</strong>
+> <strong>$</strong> <code>uci set wireless.@wifi-iface[2].network=wifi2</code>
 
-> $ <strong>uci commit wireless</strong>
+> <strong>$</strong> <code>uci commit wireless</code>
 
 Pada perintah di atas, saya menggunakan `@wifi-iface[2]` karena `Jocki2` adalah *wifi-iface* ketiga yang terdaftar di file konfigurasi tersebut.
 
@@ -202,9 +202,9 @@ config interface 'wifi'
 
 Kemudian, saya melakukan perubahan di `/etc/config/wireless` supaya *wifi-iface* menggunakan *interface* yang baru tersebut.  Selain dengan mengubah file secara manual, saya juga bisa melakukan perubahan dengan memberikan perintah berikut ini:
 
-> $ <strong>uci set wireless.@wifi-iface[1].network=wifi</strong>
+> <strong>$</strong> <code>uci set wireless.@wifi-iface[1].network=wifi</code>
 
-> $ <strong>uci commit</strong>
+> <strong>$</strong> <code>uci commit</code>
 
 Saya juga mengaktifkan DHCP untuk *interface* `wifi` dengan menambahkan baris berikut ini di `/etc/config/dhcp`:
 

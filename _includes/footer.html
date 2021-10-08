@@ -14,10 +14,10 @@
     </div>    
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/autocomplete.js/0.30.0/autocomplete.jquery.min.js"></script>
+  <script src="{{ "/assets/jquery-3.3.1.min.js" | relative_url }}"></script>
+  <script src="{{ "/assets/bootstrap.min.js" | relative_url }}"></script>
+  <script src="{{ "/assets/algoliasearch.min.js" | relative_url }}"></script>
+  <script src="{{ "/assets/autocomplete.jquery.min.js" | relative_url }}"></script>
 
   <script>      
       var client = algoliasearch('{{ site.algolia.application_id }}', '{{ site.algolia.api_key }}');

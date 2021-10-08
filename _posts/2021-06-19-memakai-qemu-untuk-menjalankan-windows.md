@@ -11,11 +11,11 @@ Berbeda dengan *virtual machine* lain seperti VirtualBox yang memiliki GUI yang 
 
 Langkah pertama yang saya lakukan adalah menyiapkan sebuah *disk image* untuk men-simulasi-kan media penyimpanan yang akan dipakai oleh sistem operasi virtual nantinya.  Saya akan menggunakan format *raw* dengan memberikan perintah seperti berikut ini:
 
-> $ <strong>qemu-img create -f raw win10-disk.img 150G</strong>
+> <strong>$</strong> <code>qemu-img create -f raw win10-disk.img 150G</code>
 
 Perintah di atas akan membuat sebuah *disk image* baru bernama win10-disk.img dengan tipe *raw* dan ukuran 150 GB.  Walaupun ukurannya 150 GB, ukuran file *disk image* ini hanya 4 KB di sistem operasi *host* (sesuai dengan jumlah sektor yang ditulis), seperti  yang ditunjukkan oleh perintah berikut ini:
 
-> $ <strong>qemu-img info win10-disk.img</strong>
+> <strong>$</strong> <code>qemu-img info win10-disk.img</code>
 
 ```
 image: win10-disk.img
@@ -26,7 +26,7 @@ disk size: 4 KiB
 
 Sekarang, saya bisa menjalankan QEMU dengan memberikan perintah seperti berikut ini:
 
-> $ <strong>qemu-system-x86_64 -cpu host -smp cores=4 -enable-kvm -vga std -m 8G -cdrom Win10_21H1_English_x64.iso win10-disk.img
+> <strong>$</strong> <code>qemu-system-x86_64 -cpu host -smp cores=4 -enable-kvm -vga std -m 8G -cdrom Win10_21H1_English_x64.iso win10-disk.img</code>
 
 Pada perintah di atas, saya menggunakan *CPU host passthrough* (`-cpu host`) sehingga prosesor yang terlihat di *host* sama persis dengan di sistem operasi *guest*.  Saya membatasinya menjadi hanya 4 core saja (`-smp cores=4`).  Tentu saja, saya tidak lupa menggunakan `-enable-kvm` agar QEMU menggunakan KVM.  Selan itu, saya juga membatasi jumlah memori ke 8 GB (`-m 8G`).
 
@@ -36,17 +36,17 @@ Setelah proses instalasi selesai dan mencoba menggunakan Windows 10 yang berjala
 
 Salah satu opsi yang populer adalah dengan mengakses *virtual machine* melalui protokol Spice dan menggunakan `-vga qxl` yang di-optimalkan untuk Spice.  Sama seperti VNC dan RDP, Spice adalah protokol yang dipakai untuk mengakses *virtual machine* secara *"jarak jauh"*.  Saya bisa mengaktifkannya dengan menjalankan QEMU dengan menggunakan perintah seperti:
 
-> $ <strong>qemu-system-x86_64 \\</strong>\
->   <strong>-cpu host \\</strong>\
->   <strong>-machine vmport=off \\</strong>\
->   <strong>-smp cores=4 \\</strong>\
->   <strong>-enable-kvm \\</strong>\
->   <strong>-spice port=3001,disable-ticketing \\</strong>\
->   <strong>-vga qxl \\</strong>\
->   <strong>-m 4G \\</strong>\
->   <strong>-device virtio-serial -chardev spicevmc,id=vdagent,debug=0,name=vdagent \\</strong>\
->   <strong>-device virtserialport,chardev=vdagent,name=com.redhat.spice.0 \\</strong>\
->   <strong>win10-disk.img</strong>
+> <strong>$</strong> <code>qemu-system-x86_64 \\</code>\
+>    <code>-cpu host \\</code>\
+>    <code>-machine vmport=off \\</code>\
+>    <code>-smp cores=4 \\</code>\
+>    <code>-enable-kvm \\</code>\
+>    <code>-spice port=3001,disable-ticketing \\</code>\
+>    <code>-vga qxl \\</code>\
+>    <code>-m 4G \\</code>\
+>    <code>-device virtio-serial -chardev spicevmc,id=vdagent,debug=0,name=vdagent \\</code>\
+>    <code>-device virtserialport,chardev=vdagent,name=com.redhat.spice.0 \\</code>\
+>    <code>win10-disk.img<code>
 
 Pada perintah di atas, saya mengaktifkan Spice pada port 3001 (`-spice port=3001`) dan mematikan perlindungan password (`disable-ticketing`).  Hal ini karena tidak akan ada orang lain yang mengakses *virtual machine* tersebut selain saya.  Apabila ini adalah sebuah *virtual machine* yang dipakai bersama atau dapat di-akses oleh publik, orang terakhir yang terhubung akan menyebabkan koneksi pengguna sebelumnya terputus.  Untuk menghindari hal tersebut, terdapat pengaturan `password` sehingga pengguna harus memasukkan kata sandi terlebih dahulu sebelum bisa terhubung ke *virtual machine*.
 

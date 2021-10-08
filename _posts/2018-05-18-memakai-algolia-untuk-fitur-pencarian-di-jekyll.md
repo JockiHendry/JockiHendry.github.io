@@ -7,9 +7,9 @@ tags: [JavaScript, SearchEngine, Jekyll]
 
 Salah satu fitur yang tidak saya jumpai setelah beralih dari Wordpress ke Jekyll adalah pencarian.  Cukup masuk akal karena Jekyll menghasilkan halaman HTML statis tanpa menggunakan fasilitas di sisi server seperti database.  Oleh sebab itu, bila ingin memiliki fitur pencarian, saya perlu menggunakan *search engine* terpisah yang akan meng-*index* setiap post di blog ini.  Biasanya saya akan men-install ElasticSearch yang men-ekspos fasilitas pencariannya dalam bentuk REST API 'siap saji' bagi klien.  Sebagai latihan, kali ini saya akan menggunakan Algolia yang merupakan layanan *hosted* tanpa perlu instalasi.  Salah satu nilai tambah Algolia adalah memiliki Search UI yang menyediakan widget siap pakai untuk ditempelkan ke website.  Karena ini adalah situs pribadi yang sederhana, saya mendaftar pada plan gratis Algolia yang memiliki batas 10.000 records dan 100.000 operasi pencarian per bulan.
 
-Langkah pertama yang perlu saya lakukan adalah menentukan bagaimana cara meng-*upload* data artikel di situs ini ke Algolia agar bisa di-*index* dan dicari. Beberapa situs dokumentasi populer seperti situs dokumentasi Twitter Bootstrap yang juga dihasilkan oleh Jekyll menggunakan [DocSearch](https://community.algolia.com/docsearch/).  Ini adalah cara yang paling gampang karena DocSearch akan mengunjungi website dan melakukan *crawling* untuk mengambil informasi di website guna di-*index*.  Pemilik situs tidak perlu melakukan apa-apa.  Sebagai alternatifnya, saya akan menggunakan plugin [jekyll-algolia](https://community.algolia.com/jekyll-algolia/).  Cara ini membutuhkan sebuah langkah ekstra dimana saya perlu memberikan perintah `bundle exec jekyll algolia` untuk meng-*upload* post Jekyll ke Algolia.
+Langkah pertama yang perlu saya lakukan adalah menentukan bagaimana cara meng-*upload* data artikel di situs ini ke Algolia agar bisa di-*index* dan dicari. Beberapa situs dokumentasi populer seperti situs dokumentasi Twitter Bootstrap yang juga dihasilkan oleh Jekyll menggunakan [DocSearch](https://community.algolia.com/docsearch/).  Ini adalah cara yang paling gampang karena DocSearch akan mengunjungi website dan melakukan *crawling* untuk mengambil informasi di website guna di-*index*.  Pemilik situs tidak perlu melakukan apa-apa.
 
-Saya mulai dengan menambahkan `jekyll-algolia` pada file `Gemfile` seperti berikut ini:
+Sebagai alternatifnya, saya juga bisa menggunakan plugin [jekyll-algolia](https://community.algolia.com/jekyll-algolia/).  Cara ini membutuhkan sebuah langkah ekstra dimana saya perlu memberikan perintah `bundle exec jekyll algolia` untuk meng-*upload* post Jekyll ke Algolia.  Sebagai contoh, saya bisa menambahkan `jekyll-algolia` pada file `Gemfile` seperti berikut ini:
 
 ```ruby
 source 'https://rubygems.org'
@@ -33,9 +33,9 @@ algolia:
 
 Nilai `application_id` dan `api_key` (search-only API key) yang dipakai dapat dilihat melalui menu **API Keys** di dashboard Algolia.  Jangan lupa juga untuk mencatat nilai *Admin API Key*.  Nilai *Admin API Key* bersifat sensitif karena semua orang yang mengetahuinya bisa menambahkan record baru ke *index* saya.  Oleh sebab itu, saya tidak akan menyimpannya dalam kode program. Walaupun demikian, *Admin API Key* tetap dibutuhkan untuk meng-*upload* artikel yang dapat dilakukan melalui perintah berikut ini di terminal:
 
-```
-ALGOLIA_API_KEY='nilai_admin_api_key' bundle exec jekyll algolia
-```
+
+> <strong>$</strong> <code>ALGOLIA_API_KEY='nilai_admin_api_key' bundle exec jekyll algolia</code>
+
 
 Setelah memberikan perintah di atas, bila saya membuka menu **Indices** di dashboard Algolia, saya akan menemukan sebuah index baru bernama `jekyll` yang berisi data artikel di situs ini, seperti yang terlihat pada gambar berikut ini:
 

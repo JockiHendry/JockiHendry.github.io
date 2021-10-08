@@ -133,11 +133,11 @@ tambahkan konfigurasi <em>environment variable</em> berupa <code>DOCKER_TLS_VERI
 Sebelum memulai menjalankan CLI, saya akan menambahkan data ke database terlebih dahulu.  Saya bisa melakukannya
 dengan memberikan perintah seperti berikut ini:
 
-> $ <strong>docker-compose exec -T db sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE' < my_sql_data_backup.sql</strong>
+> <strong>$</strong> <code>docker-compose exec -T db sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE' < my_sql_data_backup.sql</code>
 
 Setelah itu, saya bisa mencoba menjalankan aplikasi Python CLI saya dengan memberikan perintah seperti:
 
-> $ <strong>docker-compose run smm smm customers</strong>
+> <strong>$</strong> <code>docker-compose run smm smm customers</code>
 
 Bagian `docker-compose run smm` akan membuat sebuah *container* baru untuk service `smm`.  Perintah yang akan dikerjakan
 pada *container* tersebut adalah `smm customers`.  Perintah ini dapat diganti sesuai dengan kebutuhan.

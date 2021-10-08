@@ -77,20 +77,19 @@ Lalu, bagaimana dengan instalasi di perangkat Android?  Untuk merasakan pengalam
 
 Langkah paling awal dalam mengaktifkan HTTPS adalah saya perlu membuat sertifikat *'palsu'*.  Untuk mempermudah proses ini, saya menggunakan script yang ada di `<https://github.com/jsha/minica>`.  Saya membuat sebuah direktori baru bernama `certificates`.  Pada folder ini, saya memberikan perintah:
 
-```
-minica --ip-addresses 10.0.2.2
-```
+> <strong>$</strong> <code>minica --ip-addresses 10.0.2.2</code>
 
 Perintah di atas akan menghasilkan dua jenis sertifikat.  Sebuah *root certificate* (beserta *private key*-nya) akan dihasilkan di folder dimana saya menjalankan perintah tersebut.  Kemudian, akan ada folder `10.0.2.2` yang berisi sertifikat yang di-*signed* oleh *root certificate* tersebut (beserta *private key*-nya).  Sertifikat di dalam folder `10.0.2.2` adalah sertifikat yang perlu saya pakai di server Jekyll.  Sementara itu, *root certificate* adalah sertifikat yang perlu saya tambahkan pada Android agar dipercaya oleh Chrome.
 
 Langkah berikutnya, saya perlu mendaftarkan *root certificate* yang dihasilkan oleh Minima sebagai *trusted certificate* di emulator Android.  Untuk melakukan modifikasi ini, saya harus menggunakan emulator dengan target Google APIs dan bukan Google Play.  Hal ini karena emulator dengan target Google Play merupakan *production build* yang tidak bisa di-*root*.  Sementara itu untuk men-install *trusted certificate* pada Android terbaru, saya perlu akses *root*, yang diaktifkan dengan perintah seperti berikut ini:
 
-```
-adb root
-adb disable-verity
-adb remount
-adb reboot
-```
+> <strong>$</strong> <code>adb root</code>
+
+> <strong>$</strong> <code>adb disable-verity</code>
+
+> <strong>$</strong> <code>adb remount</code>
+
+> <strong>$</strong> <code>adb reboot</code>
 
 Masih pada direktori `certificates`, saya memberikan perintah `openssl x509 -hash -in minica.pem -noout` untuk memperoleh nilai hash untuk *root certificate* tersebut (`minica.pem`).  Saya kemudian membuat file dengan isi yang sama dengan `minica.pem` tetapi nama yang sesuai hash dengan perintah `cp minicam.pem <output-hash>.0`.  File ini yang kemudian saya *copy* ke emulator Android: `adb push <output-hash>.0 /system/etc/security/cacerts/`.
 
@@ -98,9 +97,7 @@ Setelah itu, pada emulator Android, saya masuk ke menu **Settings**, **Security 
 
 Setelah memastikan *root certificate* sudah menjadi *trusted certificate* di emulator Android, saya segera menjalankan versi HTTPS dari server Jekyll dengan memberikan perintah berikut ini:
 
-```
-bundle exec jekyll serve --ssl-cert certificates/10.0.2.2/cert.pem --ssl-key certificates/10.0.2.2/key.pem
-```
+> <strong>$</strong> <code>bundle exec jekyll serve --ssl-cert certificates/10.0.2.2/cert.pem --ssl-key certificates/10.0.2.2/key.pem</code>
 
 Kini, saya bisa membuka alamat `https://10.0.2.2:4000` di Chrome seperti pada gambar berikut ini:
 

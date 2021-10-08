@@ -13,49 +13,45 @@ Ada beberapa jenis implementasi VPN, seperti PPTP, IPSec, OpenVPN, dan sebagainy
 
 Konfigurasi OpenVPN yang paling sederhana adalah modus *point-to-point* tanpa enkripsi.  Pada modus ini, fasilitas enkripsi tidak aktif dan OpenVPN hanya menyambungkan dua titik jaringan yang berbeda.  Untuk menggunakannya, pada sisi *server*, saya memberikan perintah berikut ini:
 
-```
-openvpn --ifconfig 10.8.0.1 10.8.0.2 --dev tun
-```
+> <strong>$</strong> <code>openvpn --ifconfig 10.8.0.1 10.8.0.2 --dev tun</code>
 
 Kemudian, pada sisi *client*, saya memberikan perintah berikut ini:
 
-```
-openvpn --ifconfig 10.8.0.2 10.8.0.1 --dev tun --remote x.x.x.x (ganti dengan alamat ip server) --redirect-gateway def1
-```
+> <strong>$</strong> <code>openvpn --ifconfig 10.8.0.2 10.8.0.1 --dev tun --remote x.x.x.x (ganti dengan alamat ip server) --redirect-gateway def1</code>
 
 Dengan asumsi bahwa saya sudah melakukan pengaturan *packet forwarding* dan tabel `MASQUERADE` di *iptables* secara benar di sisi *server*, setelah memberikan perintah di atas, *client* bisa mengakses Internet melalui ip publik milik *server*.  Tentu saja tanpa enkrispi, OpenVPN tidak dapat berfungsi untuk melindungi data dari pihak ketiga (serangan *man in the middle*).
 
 Agar sedikit lebih aman, saya bisa menggunakan *secret key* yang dapat dihasilkan dengan menggunakan perintah seperti berikut ini:
 
-```
-openvpn --genkey --secret rahasia.key
-```
+> <strong>$</strong> <code>openvpn --genkey --secret rahasia.key</code>
 
 File `rahasia.key` yang dihasilkan nantinya bisa digunakan sebagai nilai untuk parameter `--secret`.  Walaupun sudah melakukan enkripsi, penggunaan *static key* seperti ini dianggap tidak optimal.  Bagaimana bila saat file ini dipindahkan dari *server* ke *client* (melalui *email*, *flash drive*, dan sejenisnya), pihak ketiga memperoleh salinannya?  Selain itu, bila pihak ketiga merekam seluruh komunikasi *client* dan *server* dari awal, bila ia berhasil memperoleh *static key* di kemudian hari, maka seluruh komunikasi yang telah terekam akan dapat dibaca.  Permasalahan ini disebabkan oleh kurangnya *perfect forward secrecy* (PFS).
 
 Metode enkripsi yang dianggap optimal untuk OpenVPN adalah dengan menggunakan PKI dan sertifikat digital.  Saya tidak perlu memperoleh *root certificate* secara resmi; saya bisa menggunakan proyek Easy-RSA untuk menghasilkan sertifikat yang dibutuhkan.  Saya bisa men-*download* Easy-RSA dari <https://github.com/OpenVPN/easy-rsa/releases>.  Setelah men-*extract* file tersebut, saya men-copy file `vars.example` menjadi `vars` dan melakukan perubahan pada nilai seperti `EASYRSA_REQ_COUNTRY`, `EASYRSA_REQ_PROVICE`, `EASYRSA_REQ_CITY`, `EASYRSA_REQ_ORG`, `EASYRSA_REQ_EMAIL`, dan `EASYRSA_REQ_OU`.  Setelah itu, saya memberikan perintah:
 
-```
-./easyrsa init-pki
-./easyrsa build-ca
-```
+
+> <strong>$</strong> <code>./easyrsa init-pki</code>
+
+> <strong>$</strong> <code>./easyrsa build-ca</code>
+
 
 Perintah di atas akan menghasilkan sertifikat CA pada lokasi `pki/ca.crt`.
 
 Sekarang, saatnya menghasilkan sertifikat untuk *server* dan *client* yang di-*sign* oleh sertifikat CA tersebut dengan perintah:
 
-```
-./easyrsa build-server-full server
-./easyrsa build-client-full client
-```
+
+> <strong>$</strong> <code>./easyrsa build-server-full server</code>
+
+> <strong>$</strong> <code>./easyrsa build-client-full client</code>
+
 
 Sertifikat untuk *server* akan dihasilkan di `pki/issued/server.crt` dan sertifikat untuk *client* dapat dijumpai di `pki/issued/client.crt`.
 
 Berikutnya, saya membuat Diffie-Hellman (DH) key dengan memberikan perintah berikut ini:
 
-```
-./easyrsa gen-dh
-```
+
+> <strong>$</strong> <code>./easyrsa gen-dh</code>
+
 
 Karena argumen untuk menggunakan sertifikat digital cukup banyak untuk diketik, saya memilih membuat file konfigurasi OpenVPN dengan nama `server.ovpn` yang isinya seperti berikut ini:
 
@@ -77,17 +73,19 @@ key /lokasi/ke/file/EasyRSA-3.0.4/pki/private/server.key
 
 Saya kemudian bisa menjalankan OpenVPN di-sisi server dengan memberikan perintah berikut ini:
 
-```
-openvpn --config server.ovpn
-```
+
+> <strong>$</strong> <code>openvpn --config server.ovpn</code>
+
 
 Sekarang, saatnya melakukan konfigurasi di sisi *client*.  Sebelumnya, saya perlu men-copy sertifikat publik CA `ca.crt`, sertifikat publik *client* (`client.crt`) dan *private key* (`client.key`) yang telah dihasilkan sebelumnya ke komputer *client*.  Sebagai contoh, saya bisa menggunakan perintah `scp` di Linux:
 
-```
-scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/ca.crt .
-scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/issued/client.crt .
-scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/private/client.key .
-```
+
+> <strong>$</strong> <code>scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/ca.crt .</code>
+
+> <strong>$</strong> <code>scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/issued/client.crt .</code>
+
+> <strong>$</strong> <code>scp user@alamat-ip-server:~/EasyRSA-3.0.4/pki/private/client.key .</code>
+
 
 Satelah itu saya membuat file konfigurasi OpenVPN untuk *client* dengan nama `client.ovpn` yang isinya seperti berikut ini:
 
@@ -106,9 +104,9 @@ key client.key
 
 Untuk menjalankan OpenVPN di sisi *client*, saya memberikan perintah berikut ini:
 
-```
-openvpn --config client.ovpn
-```
+
+> <strong>$</strong> <code>openvpn --config client.ovpn</code>
+
 
 Sampai disini, komunikasi dari *client* ke *server* sudah ter-enkripsi menggunakan sertifikat digital.  Walaupun demikian, masih ada celah keamanan yang dapat diperbaiki.  Sebagai contoh, bagaimana bila pihak ketiga melakukan serangan *man in the middle* dengan berpura-pura menjadi *server* saya (padahal hanya meneruskan request dari *client* ke *server* yang sesungguhnya)?
 

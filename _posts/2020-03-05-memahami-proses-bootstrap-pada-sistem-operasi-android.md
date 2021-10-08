@@ -15,9 +15,9 @@ kode program Android adalah dengan menggunakan tool `repo` yang direkomendasikan
 program Android.  Saya bisa mendapatkan versi terbarunya dengan mengikuti petunjuk di <https://source.android.com/setup/build/downloading>.  Setelah melakukan 
 instalasi `repo`, saya memberikan perintah berikut ini untuk mendapatkan kode program Android 8.1.0_r74 (Oreo):
 
-> $ <code>repo init -u https://android.googlesource.com/platform/manifest -b android-8.1.0_r74 --depth=1</code>
+> <strong>$</strong> <code>repo init -u https://android.googlesource.com/platform/manifest -b android-8.1.0_r74 --depth=1</code>
 
-> $ <code>repo sync</code>
+> <strong>$</strong> <code>repo sync</code>
 
 Saya hanya perlu menunggu hingga seluruh proses download selesai.  Ini akan memakan waktu yang cukup lama!  Apa yang sedang saya *download* secara resmi disebut sebagai
 Android Open Source Project (AOSP).  Setelah mendapatkan seluruh kode program AOSP, langkah berikutnya adalah men-*build* kode program tersebut.  Biasanya 
@@ -30,9 +30,9 @@ operasi yang dijalankan nanti adalah sistem operasi yang benar.  Sekarang saatny
 nantinya akan mendelagasikan tugasnya ke Soong.  Akan tetapi, cara yang lebih mudah adalah menggunakan script bantuan `envsetup.sh` yang dibuat untuk mempermudah 
 programmer dalam bekerja dengan AOSP.  Saya bisa menggunakannya dengan memberikan perintah berikut ini:
  
-> $ <code>source build/envsetup.sh</code>
+> <strong>$</strong> <code>source build/envsetup.sh</code>
 
-> $ <code>lunch aosp_x86-userdebug</code>
+> <strong>$</strong> <code>lunch aosp_x86-userdebug</code>
 
 Perintah `lunch` dapat dipakai untuk memilih target perangkat dan variasi sistem operasi yang hendak dibuat.  Setelah perintah ini diberikan, saya akan memiliki 
 beberapa perintah siap pakai seperti `m`, `emulator`, dan sebagainya.  Jangan lupa mengerjakan kembali perintah di atas bila berpindah ke terminal baru!
@@ -45,9 +45,9 @@ favorit mereka dan mengutamakan fasilitas seperti <em>font</em> dan <em>dark mod
 
 Saya bisa memulai *building* dengan memberikan perintah:
 
-> $ <code>export LC_ALL=C</code>
+> <strong>$</strong> <code>export LC_ALL=C</code>
 
-> $ <code>m -j16</code>
+> <strong>$</strong> <code>m -j16</code>
 
 Sesuaikan nilai parameter `-j` dengan jumlah core CPU untuk mendapatkan kinerja terbaik.  Tergantung pada CPU yang dipakai, proses pertama kali bisa berlangsung hingga 
 satu jam lebih!  Selain itu, bisa saja berakhir dengan kegagalan jika *package* yang dibutuhkan belum ter-install di sistem operasi.  Namun, hal ini bisa diatasi cukup 
@@ -55,7 +55,7 @@ dengan memberikan perintah `sudo apt get` untuk *package* yang kurang.
 
 Seperti apa file yang dihasilkan setelah proses *building* selesai?  Saya bisa menemukannya dengan memberikan perintah berikut ini:
 
-> $ <code>ls out/target/product/generic_x86/*.img</code>
+> <strong>$</strong> <code>ls out/target/product/generic_x86/*.img</code>
 
 ```
 out/target/product/generic_x86/cache.img          out/target/product/generic_x86/system-qemu.img    out/target/product/generic_x86/userdata.img
@@ -67,7 +67,7 @@ Image ini dikenal sebagai [Generic System Image (GSI)](https://developer.android
  adalah `system.img` yang mengandung segala sesuatu yang dibutuhkan oleh sistem operasi Android (belum termasuk *kernel*!).  Untuk menjalankannya, saya bisa memberikan
 perintah berikut ini:
 
-> $ <strong>emulator</strong> 
+> <strong>$</strong> <strong>emulator</strong> 
 
 ![Tampilan Emulator]({{ "/assets/images/gambar_00044.png" | relative_url}}){:class="img-fluid rounded"}
 
@@ -127,13 +127,13 @@ Kenapa saya tidak menjumpai file `boot.img` pada saat melakukan *building* untuk
  `kernel-ranchu` dipakai secara langsung oleh emulator.  Untuk melihat file `boot.img` dihasilkan sebagai output, saya bisa mencoba melakukan *building*
 untuk perangkat asli, dengan memberikan perintah seperti berikut ini:
 
-> $ <code>lunch aosp_bullhead-userdebug</code>
+> <strong>$</strong> <code>lunch aosp_bullhead-userdebug</code>
 
-> $ <code>m -j16</code>
+> <strong>$</strong> <code>m -j16</code>
 
 Sekarang, saya akan menemukan hasil *build* seperti berikut ini:
 
-> $ <code>ls out/target/product/generic_x86/*.img</code>
+> <strong>$</strong> <code>ls out/target/product/generic_x86/*.img</code>
 
 ```
 out/target/product/bullhead/boot.img   out/target/product/bullhead/ramdisk-recovery.img  out/target/product/bullhead/recovery.img  out/target/product/bullhead/userdata.img
@@ -161,25 +161,25 @@ proses ini cukup merepotkan di perangkat Xiaomi karena saya harus men-download a
 Setelah *kernel* dijalankan, ia memiliki kendali penuh untuk menentukan apa yang akan dilakukan selanjutnya.  Saya bisa melihat alur eksekusi ini dengan menggunakan
 fasilitas Bootchart.  Saya bisa mengaktifkannya dengan memberikan perintah seperti berikut ini:
 
-> $ <code>emulator -bootchart 180 -no-snapshot</code>
+> <strong>$</strong> <code>emulator -bootchart 180 -no-snapshot</code>
 
 Seharusnya argumen `-bootchart 180` akan secara otomatis menjalankan proses bootchart selama 2 menit.  Akan tetapi, saya menemukan bahwa pada emulator yang saya
 pakai.  Oleh sebab itu, sebagai gantinya, saya menjalankan perintah `adb shell` setelah *emulator* dijalankan dan kemudian memberikan perintah berikut ini:
 
-> $ <code>su</code>
+> <strong>$</strong> <code>su</code>
 
-> $ <code>touch /data/bootchart/enabled</code>
+> <strong>$</strong> <code>touch /data/bootchart/enabled</code>
 
-> $ <code>reboot</code>
+> <strong>$</strong> <code>reboot</code>
 
 Perintah di atas akan mengaktifkan proses bootchart yang melakukan pengumpulan data. Sambil menunggu sistem operasi Android dijalankan, saya bisa menjalankan perintah 
 berikut ini untuk men-*download* tool yang dapat menghasilkan grafis berdasar data bootchart:
 
-> $ <code>sudo apt install pybootchartgui</code>
+> <strong>$</strong> <code>sudo apt install pybootchartgui</code>
 
 Setelah halaman utama Android ditampilkan di *emulator*, saya kemudian memberikan perintah berikut ini (melalui *terminal* terpisah tanpa mematikan *emulator*):
 
-> $ <code>$ANDROID_BUILD_TOP/system/core/init/grab-bootchart.sh</code>
+> <strong>$</strong> <code>$ANDROID_BUILD_TOP/system/core/init/grab-bootchart.sh</code>
 
 Saya akan menjumpai file `bootchart.png` di lokasi dimana saya memberikan perintah di atas.  Tampilannya terlihat seperti pada gambar berikut ini:
 

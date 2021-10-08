@@ -9,17 +9,17 @@ Keyboard yang saya pakai memiliki *backlit* (pencahayaan) yang dapat dinyalakan 
 
 Dari hasil pencarian, untuk menyalakan *backlit* keyboard di Ubuntu, saya dapat memberikan perintah berikut ini di terminal:
 
-    xset led named "Scroll Lock"
+> <strong>$</strong> <code>xset led named "Scroll Lock"</code>
 
 Sebagai kebalikannya, untuk mematikan lampu keyboard, saya menggunakan perintah berikut ini di terminal:
 
-    xset -led named "Scroll Lock"
+> <strong>$</strong> <code>xset -led named "Scroll Lock"</code>
 
 Kedua perintah di atas akan menyalakan dan mematikan lampu keyboard terlepas dari apakah tombol Scroll Lock di keyboard di tekan atau tidak.
 
 Tentu saja akan sangat merepotkan bila saya harus masuk ke terminal terlebih dahulu untuk menyalakan dan mematikan lampu keyboard.  Jalan keluar lain yang bisa saya coba adalah menggunakan perintah berikut ini di terminal:
 
-    xmodmap -e 'add mod3 = Scroll_Lock'
+> <strong>$</strong> <code>xmodmap -e 'add mod3 = Scroll_Lock'</code>
 
 Sekarang, saya bisa menyalakan dan mematikan *backlit* keyboard melalui tombol fisik Scroll Lock.
 
@@ -27,7 +27,7 @@ Walaupun demikian, solusi ini hanya berlaku sementara sampai saya mematikan komp
 
 Solusi lain yang lebih permanen adalah dengan mengubah pemetaan *symbols* milik xkb di direktori `/usr/share/X11/xkb/symbols`.  Direktori ini berisi file konfigurasi pemetaan *symbols*  yang dikelompokkan dalam kode negara.  Untuk melihat kode negara yang aktif (yang sedang saya pakai) di keyboard saat ini, saya memberikan perintah berikut ini:
 
-    setxkbmap -query
+> <strong>$</strong> <code>setxkbmap -query</code>
 
 
 Pada keyboard saya, nilai `layout` adalah `us`.  Oleh sebab itu, saya akan mengubah file `/usr/share/X11/xkb/symbols/us` dengan menambahkan baris berikut ini pada file tersebut:

@@ -148,11 +148,11 @@ Mengapa membagi isi tabel ke dalam *chunks*?  Karena saya tidak ingin memanggil 
 
 Untuk menjalankan aplikasi CLI ini tanpa melakukan instalasi, saya bisa membuka sebuah **Terminal** baru di PyCharm.  Setiap *terminal* di PyCharm sudah dilengkapi dengan aktivasi *Virtualenv*.  Bila saya membuka *terminal* di sistem operasi, saya perlu memberikan perintah `virtualenv venv` dan `. venv/bin/activate` untuk mencapai hasil yang sama.  Setelah itu, saya memberikan perintah berikut ini:
 
-> $ <strong>pip install --editable .</strong>
+> <strong>$</strong> <code>pip install --editable .</code>
 
 Sekarang, bila saya memberikan perintah `my-migration` di terminal, saya akan menemukan hasil seperti berikut ini:
 
-> $ <strong>my-migration</strong>
+> <strong>$</strong> <code>my-migration</code>
 
 ```
 Usage: my-migration [OPTIONS] COMMAND [ARGS]...
@@ -166,7 +166,7 @@ Commands:
 
 Untuk menampilkan informasi *sub command* `algolia`, saya bisa memberikan perintah seperti berikut ini:
 
-> $ <strong>my-migration algolia --help</strong>
+> <strong>$</strong> <code>my-migration algolia --help</code>
 
 ```
 Usage: my-migration algolia [OPTIONS]
@@ -182,6 +182,6 @@ Options:
 
 Untuk mengerjakan *script* ini dengan nilai *default*, saya cukup memberikan perintah seperti berikut ini:
 
-> $ <strong>my-migration algolia</strong>
+> <strong>$</strong> <code>my-migration algolia</code>
 
 ![Tampilan Aplikasi CLI]({{ "/assets/images/gambar_00023.png" | relative_url}}){:class="img-fluid rounded"}

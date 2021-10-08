@@ -15,11 +15,13 @@ footer {
 }
 
 nav.navbar.menu {
+	background: linear-gradient(to bottom, #222, 85%, #777);
 	box-shadow: 0 6px 6px -6px #aaa;
 	margin-bottom: 2rem;
 }
 
-.navbar-brand {   
+.navbar-brand {
+
 	a {
 		color: rgba(255, 255, 255, 0.5);
 		&.active {
@@ -39,7 +41,14 @@ a {
 }
 
 pre {
-	margin-bottom: 0px;
+	margin-bottom: 0;
+	font-family: 'Ubuntu Mono', monospace;
+	font-size: 100%;
+}
+
+code {
+	font-family: 'Ubuntu Mono', monospace;
+	font-size: 100%;
 }
 
 .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
@@ -66,4 +75,24 @@ table {
 	}
 	margin-bottom: 1rem;
 	margin-top: 1rem;
+}
+
+ul.profile {
+	list-style-type: none;
+	padding-left: 0;
+	margin-top: 20px;
+	li {
+		margin-bottom: 10px;
+		img {
+			width: 32px;
+			height: 32px;
+			margin-right: 10px;
+		}
+		a {
+			color: #555;
+			text-decoration: none;
+			border-bottom: 1px dotted #000;
+		}
+
+	}
 }

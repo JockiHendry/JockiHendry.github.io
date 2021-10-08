@@ -9,7 +9,7 @@ Saat menggunakan *external HDD* untuk bekerja, saya menemukan bahwa Ubuntu beker
 
 Untuk mengukur kinerja Disk I/O  di sistem operasi Ubuntu tersebut, saya akan menggunakan perintah `iostat` saat saya mensimulasikan bekerja dengan IDE, menjalankan server database dan mengaktifkan `ng serve` untuk *front end*.  Berikut ini adalah hasil yang saya peroleh:
 
-> $ <strong>iostat -xdh /dev/sda</strong>
+> <strong>$</strong> <code>iostat -xdh /dev/sda</code>
 
 ```
 Linux 5.0.0-13-generic 	06/05/19 	_x86_64_	(4 CPU)
@@ -40,7 +40,7 @@ Kinerja yang diukur oleh `iostat` berhubungan dengan I/O scheduler di sistem ope
 
 Karena tidak ada satu Ubuntu menyediakan beberapa pilihan I/O scheduler.Untuk melihat I/O scheduler yang sedang aktif di Ubuntu, saya bisa memberikan perintah berikut ini:
 
-> $ <strong>cat /sys/block/sda/queue/scheduler</strong>
+> <strong>$</strong> <code>cat /sys/block/sda/queue/scheduler</code>
 
 ```
 noop deadline [cfq]
@@ -50,7 +50,7 @@ Pada hasil di atas, terlihat bahwa sistem operasi menyediakan pilihan I/O schedu
 
 Untuk mengubah I/O scheduler yang sedang aktif, saya bisa memberikan perintah seperti:
 
-> $ <strong>echo deadline | sudo tee /sys/block/sda/queue/scheduler</strong>
+> <strong>$</strong> <code>echo deadline | sudo tee /sys/block/sda/queue/scheduler</code>
 
 Perintah di atas akan mengubah I/O scheduler yang aktif dari `cfg` menjadi `deadline`.  Untuk mengukur efek dari pengaturan yang saya lakukan, tidak cara yang lebih baik selain mencoba menggunakan sistem operasi tersebut sehari-hari.  Ada beberapa hal yang tidak cukup ditunjukkan dengan angka.  Sebagai contoh, saat saya mencoba mengganti penggunaan I/O scheduler dari `mq-deadline` menjadi `none`, saya menemukan bahwa kecepatan meningkat secara drastis di aplikasi *benchmark*.  Akan tetapi, efek sampingnya adalah aplikasi terasi menjadi lebih sering diam menunggu.
 
@@ -74,7 +74,7 @@ UUID=xxx /               ext4    errors=remount-ro,noatime,<strong>commit=30</st
 
 Setelah melihat I/O scheduler dan *file system* yang merupakan pengaturan di sisi sistem operasi, kali ini saya akan mencoba melihat pengaturan yang berhubungan dengan perangkat HDD itu sendiri. Tool `hdparm` akan sangat berguna disini.  Sebagai contoh, saya bisa melihat kecepatan baca HDD secara langsung (mengabaikan *page cache*) dengan menggunakan perintah seperti berikut ini:
 
-> $ <strong>sudo hdparm -t --direct /dev/sda</strong>
+> <strong>$</strong> <code>sudo hdparm -t --direct /dev/sda</code>
 
 ```
 /dev/sda:
@@ -84,7 +84,7 @@ Setelah melihat I/O scheduler dan *file system* yang merupakan pengaturan di sis
 Untuk melihat kecepatan tulis HDD, saya bisa mencoba menggunakan perintah `dd` seperti berikut ini:
 
 
-> $ <strong>dd if=/dev/zero of=test.img bs=1G count=1 oflag=dsync</strong>
+> <strong>$</strong> <code>dd if=/dev/zero of=test.img bs=1G count=1 oflag=dsync</code>
 
 ```
 1+0 records in
@@ -94,7 +94,7 @@ Untuk melihat kecepatan tulis HDD, saya bisa mencoba menggunakan perintah `dd` s
 
 Pada hasil di atas, terlihat bahwa kecepatan tulis di HDD yang saya pakai adalah 96,5 MB/s.  Untuk meningkatkan kinerja tulis, saya perlu memastikan bahwa fitur *write caching* di HDD aktif.  Berbeda dengan *page cache* dari sistem operasi, HDD juga memiliki *cache* internal di dalam perangkatnya.  Secara default, fasilitas ini selalu aktif.  Akan tetapi, bila belum aktif, saya juga bisa mengaktifkannya dengan memberikan perintah seperti berikut ini:
 
-> $ <strong>sudo hdparm -W1 /dev/sda</strong>
+> <strong>$</strong> <code>sudo hdparm -W1 /dev/sda</code>
 
 ```
 /dev/sda:

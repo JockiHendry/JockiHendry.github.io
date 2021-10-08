@@ -11,14 +11,10 @@ Pada awalnya, untuk berkomunikasi dengan sebuah server, seseorang harus menginga
 
 Jadi, *name server* boleh dibilang adalah sebuah database yang terdiri atas nama dan *IP address*.  Selain sering dibaca, database ini juga perlu diperbaharui karena para pemilik server baru akan mendaftarkan nama server mereka.  Sama seperti database manapun, semakin hari seiring waktu berlalu, *name server* bisa menjadi penuh dan lambat!  Lalu apa solusinya?  Domain Name System (DNS) terlahir untuk menjawab pertanyaan ini.  Sejak tahun 1987 hingga tulisan ini dibuat, DNS masih menjadi solusi yang bekerja dengan baik.
 
-1. [Struktur Organisasi](#section1)
-1. [Konfigurasi Zone](#section2)
-1. [Operasi DNS](#section3)
-
-### <a name="section1"></a>Struktur Organisasi
+### Struktur Organisasi
 
 DNS menggunakan penamaan yang bersifat hierarkial.  Sebagai contoh, nama `www.latihan.com.` terdiri 4 bagian yang dibaca dari paling kanan menuju ke kiri:
-1.  Sebuah titik (.) paling kanan yang mewakili *root*.  Titik ini biasanya boleh diabaikan oleh pengguna tetapi penting pada saat melakukan [konfigurasi *zone file*](#section2) yang mensyaratkan penamaan Fully Qualified Domain Name (FQDN).  Pada BIND, misalnya, bila sebuah nama domain tidak diakhir titik, maka nilai `$ORIGIN` secara otomatis akan ditambahkan pada nama tersebut.
+1.  Sebuah titik (.) paling kanan yang mewakili *root*.  Titik ini biasanya boleh diabaikan oleh pengguna tetapi penting pada saat melakukan konfigurasi *zone file* yang mensyaratkan penamaan Fully Qualified Domain Name (FQDN).  Pada BIND, misalnya, bila sebuah nama domain tidak diakhir titik, maka nilai `$ORIGIN` secara otomatis akan ditambahkan pada nama tersebut.
 1.  Top-Level Domain (TLD) yang pada contoh ini adalah `.com`.
 1.  Second-Level Domain (SLD) yang pada contoh ini adalah `latihan`.
 1.  Host name yang pada contoh ini adalah `www`.
@@ -41,12 +37,12 @@ Pada contoh `www.latihan.com`, respon yang dikembalikan setelah menghubungi *roo
 
 Kembali pada contoh `www.latihan.com`, setelah memperoleh lokasi *name server* untuk `latihan.com` dari gTLD `.com`, DNS resolver akan menanyakan *IP address* untuk host `www` pada *name server* tersebut.  Pemilik domain sesungguhnya bisa melakukan pemetaan ke server mereka secara bebas dengan menggunakan nama apa saja. Pada awal mula Internet, `www` merupakan sebuah nama standar untuk web server.  Anggap saja `www` adalah penamaan *best practise* yang sudah tidak banyak diterapkan lagi saat ini!
 
-### <a name="section2"></a>Konfigurasi Zone
+### Konfigurasi Zone
 
 Saatnya untuk lebih detail lagi: bagaimana sebuah *name server* menyimpan pemetaan dari nama ke *IP address*?  DNS menggunakan file teks yang disebut sebagai *zone file* untuk mendeskripsikan domain yang ditangani *name server* (disebut juga sebagai *zone*).  Pada saat menyewa domain di *registrar*, biasanya pengguna sudah disediakan *name server* bawaan.  Hampir semua penjual domain memiliki user interface berbasis web untuk mempermudah mengubah *zone file* di *name server* tersebut.  Beberapa penjual, misalnya GoDaddy, memungkinkan pengguna untuk men-*export* *zone file* guna mempermudah migrasi ke *name server* lain.  Sebagai contoh, ini adalah *zone file* bawaan yang saya *export* dari GoDaddy:
 
 ```
-﻿; Domain: xyzxyz.xyz
+; Domain: xyzxyz.xyz
 ; Exported (y-m-d hh:mm:ss): 2018-05-23 13:10:09
 ;
 ; This file is intended for use for informational and archival
@@ -107,7 +103,7 @@ NS RR berisi referensi ke *authoritative name server*.  Pada contoh di atas, ter
 
 Selain record di atas, *zone file* juga bisa berisi RR lainnya seperti MX RR, TXT RR, PTR RR, AAAA RR, dan sebagainya.
 
-### <a name="section3"></a>Operasi DNS
+### Operasi DNS
 
 Setelah memahami struktur organisasi DNS yang hierarkial, sekarang saatnya mencari tahu bagaimana sesungguhnya proses yang terjadi saat saya menanyakan sebuah nama seperti `www.latihan.com` hingga memperoleh *IP address*.
 
@@ -115,7 +111,7 @@ Setiap sistem operasi memiliki apa yang disebut sebagai *DNS stub-resolver*.  Pe
 
 Untuk mensimulasikan cara kerja *DNS resolver*, saya bisa menggunakan fasilitas `+trace` dari perintah `dig` seperti berikut ini:
 
-> $ <strong>dig @8.8.8.8 +trace -4 xyzxyz.xyz</strong>
+> <strong>$</strong> <code>dig @8.8.8.8 +trace -4 xyzxyz.xyz</code>
 
 ```
 ; <<>> DiG 9.11.3-1ubuntu1-Ubuntu <<>> @8.8.8.8 +trace -4 xyzxyz.xyz
@@ -162,7 +158,7 @@ Berikut ini adalah proses query yang terjadi:
 
 Proses di atas disebut juga sebagai *iterative DNS query* atau *non-recursive DNS query*.  Kebalikannya, pada *recursive DNS query*, *name server* tujuan akan melakukan *DNS query* ke tingkat berikutnya dan mengembalikan hasilnya.  *DNS query* untuk *root servers* dan *TLD* selalu dilakukan secara *iterative* (*non-recursive*).  Itu sebabnya, saya tidak pernah bisa meminta hasil langsung dari *root servers*, seperti yang diperlihatkan oleh:
 
->$ <strong>dig @a.root-servers.net xyzxyz.xyz</strong>
+> <strong>$</strong> <code>dig @a.root-servers.net xyzxyz.xyz</code>
 
 ```
 ; <<>> DiG 9.11.3-1ubuntu1-Ubuntu <<>> @a.root-servers.net xyzxyz.xyz

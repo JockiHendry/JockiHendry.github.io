@@ -3,32 +3,25 @@ layout: default
 title: Tentang Saya
 ---
 
-<div class="container">
+<div class="container about">
 	<div class="row mb-3">
-		<div class="card col-12 col-md mr-3 mb-3 mb-md-0 box-shadow">
+		<p>
+			Jocki Hendry adalah seorang <em>full-stack software engineer</em> dengan <a href="https://en.wikipedia.org/wiki/T-shaped_skills" target="_blank">T-shaped skills</a>.  Fokus keahliannya adalah pemograman <em>back-end</em>.
+			<small><a href="mailto:owner@jocki.me">owner@jocki.me</a></small>
+		</p>
+	</div>
+	<div class="row mb-3">
+		<div class="card col-12 col-md-5 mr-3 mb-3 mb-md-0 box-shadow">
 			<div class="card-body">
-				<h5 class="card-title">Siapa Saya</h5>
-				<p class="card-text">
-					Jocki Hendry adalah seorang <em>full-stack software engineer</em> dengan <a href="https://en.wikipedia.org/wiki/T-shaped_skills" target="_blank">T-shaped skills</a>.  Fokus keahlian Jocki Hendry adalah pemograman <em>back-end</em>.
-				</p>
-				<blockquote class="blockquote text-center">
-					<p>When you think a problem is too complicated, break it down into many unrelated small problems.</p>
-					<p class="blockquote-footer">A painless troubleshooting by <cite>Jocki Hendry</cite></footer>
-				</blockquote>
-				<p class="card-text">
-					Blog ini berisi kumpulan masalah yang Jocki jumpai dan solusinya. Jocki <strong>tidak</strong> menyebarkan, mendukung, atau mengajarkan teknologi atau metodologi apapun.  Solusi Jocki mungkin bukan yang terbaik pada konteks yang berbeda.
-				</p>
-				<small class="card-text text-muted">
-					<p>
-					GitHub: <a href="https://github.com/JockiHendry">https://github.com/JockiHendry</a> &middot; Email: <a href="mailto:owner@jocki.me">owner@jocki.me</a>
-					</p>
-					<p>
-					<a href="https://stackoverflow.com/story/jockihendry">Stackoverflow Developer Story</a>
-					</p>
-				</small>								
+				<h5 class="card-title">Profil Saya</h5>
+				<ul class="profile">
+					<li><img src="{{ "/assets/images/icons/github.ico" }}" /><a href="https://github.com/JockiHendry" target="_blank">GitHub</a></li>
+					<li><img src="{{ "/assets/images/icons/so.ico" }}" /><a href="https://stackoverflow.com/story/jockihendry" target="_blank">Stackoverflow Developer Story</a></li>
+					<li><img src="{{ "/assets/images/icons/qwiklabs.ico" }}" /><a href="https://www.cloudskillsboost.google/public_profiles/92adcd2e-7812-483f-9a14-3075a01d6273" target="_blank">Google Qwiklabs</a></li>
+				</ul>
 			</div>
 		</div>	
-		<div class="card col-12 col-md-5 box-shadow">
+		<div class="card col-12 col-md box-shadow">
 			<div class="card-body">
 				<h5 class="card-title">Keahlian Saya</h5>
 				<div id="category-container"></div>
@@ -44,8 +37,8 @@ title: Tentang Saya
 		</div>
 	</div>
 </div>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{{ "/assets/wordcloud.js" | relative_url }}""></script>
+<script src="{{ "/assets/highcharts.js" | relative_url }}"></script>
+<script src="{{ "/assets/wordcloud.js" | relative_url }}"></script>
 <script>
 	Highcharts.chart('category-container', {
 		series: [{
@@ -106,3 +99,8 @@ title: Tentang Saya
 		}
 	});
 </script>
+<style>
+	body {
+		background-color: #eee;
+	}
+</style>

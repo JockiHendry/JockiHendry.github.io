@@ -11,9 +11,9 @@ Oleh sebab itu, pada kesempatan ini, saya akan menggunakan JasperReports Server 
 
 Agar memudahkan proses *deployment*, saya akan menggunakan Docker untuk menjalankan JasperReports Server.  Saya menemukan sebuah image JasperReports Server siap pakai di <https://hub.docker.com/r/bitnami/jasperreports/>.  Untuk menggunakannya, saya segera memberikan perintah berikut ini:
 
-> $ <strong>curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-jasperreports/master/docker-compose.yml > docker-compose.yml</strong>
+> <strong>$</strong> <code>curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-jasperreports/master/docker-compose.yml > docker-compose.yml</code>
 
-> $ <strong>docker-compose up</strong>
+> <strong>$</strong> <code>docker-compose up</code>
 
 <div class="alert alert-info" role="alert">
 <p>

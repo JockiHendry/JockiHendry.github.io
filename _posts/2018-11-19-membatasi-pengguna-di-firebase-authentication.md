@@ -23,7 +23,6 @@ import * as admin from 'firebase-admin';
 
 admin.initializeApp(functions.config().firebase);
 
-// noinspection JSUnusedGlobalSymbols
 export const checkForWhitelistedEmails = functions.auth.user().onCreate(user => {
     const email = user.email;
     const whitelistedEmails = ['user@jocki.me'];

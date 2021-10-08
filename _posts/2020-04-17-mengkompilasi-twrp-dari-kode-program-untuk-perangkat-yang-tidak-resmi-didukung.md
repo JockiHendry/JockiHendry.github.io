@@ -55,7 +55,7 @@ wilayah abu-abu (atau mungkin melanggar hukum).  Bila seluruh komponen AOSP meng
 
 Saya akan mulai dengan memberikan perintah berikut ini:
 
-> $ <strong>repo init --depth=1 -u git://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git -b twrp-9.0</strong>
+> <strong>$</strong> <code>repo init --depth=1 -u git://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git -b twrp-9.0</code>
 
 Pada perintah di atas, saya menggunakan kode program TWRP yang berdasarkan OmniROM dan Android 9 (Pie).  Sebagai informasi, saya sebelumnya sudah melakukan 
 instalasi tools `repo` dari Google di [tulisan sebelumnya]({% post_url 2020-03-05-memahami-proses-bootstrap-pada-sistem-operasi-android %}).
@@ -76,18 +76,18 @@ Berikutnya, saya membuat sebuah *local manifest* untuk `repo` dengan nama sepert
 Manifest di atas akan menginstruksikan `repo` untuk men-download dari GitHub yang bersangkutan ke folder `kernel/xiaomi/platina` dan `device/xiaomi/platina`.  Saya
 dapat memulai proses download dengan memberikan perintah berikut ini (sembari mempersiapkan diri untuk menunggu proses download 22,7 GB selesai):
 
-> $ <strong>. build/envsetup.sh</strong>
+> <strong>$</strong> <code>. build/envsetup.sh</code>
 
-> $ <strong>repo sync</strong>
+> <strong>$</strong> <code>repo sync</code>
 
 Langkah berikutnya adalah mengubah isi *device tree* yang ada di folder `device/xiaomi/platina`.  Saya bisa memulai dengan mencari kata `dipper` dan menggantinya
 dengan `platina` dengan menggunakan perintah berikut ini:
 
-> $ <strong>find device/xiaomi/platina -type f -exec sed -i 's/dipper/platina/g' {} +</strong>
+> <strong>$</strong> <code>find device/xiaomi/platina -type f -exec sed -i 's/dipper/platina/g' {} +</code>
 
-> $ <strong>find device/xiaomi/platina -type f -exec sed -i 's/MI 8/MI 8 Lite/g' {} +</strong>
+> <strong>$</strong> <code>find device/xiaomi/platina -type f -exec sed -i 's/MI 8/MI 8 Lite/g' {} +</code>
 
-> $ <strong>find device/xiaomi/platina -name "*dipper*" -exec rename -v 's/dipper/platina/g' {}  \;</strong>
+> <strong>$</strong> <code>find device/xiaomi/platina -name "*dipper*" -exec rename -v 's/dipper/platina/g' {}  \;</code>
 
 
 File yang paling penting di `/device/xiaomi/platina` adalah `BoardConfig.mk`.  Saya perlu melakukan beberapa pengaturan variabel di file ini.
@@ -113,7 +113,7 @@ saya butuhkan disini adalah `boot.img`.  Ini sebenarnya adalah file arsip yang t
 
 Untuk meng-ekstraks `boot.img`, saya bisa menggunakan tool `abootimg` dengan memberikan perintah:
 
-> $ <strong>abootimg -x boot.img</strong>
+> <strong>$</strong> <code>abootimg -x boot.img</code>
 
 Sekarang, saya tinggal membuka file `bootimg.cfg` dan memeriksa nilai `cmdline` di-sini.  Saya perlu menyalin isi `cmdline` ke variabel `BOARD_KERNEL_CMDLINE` di `BoardConfig.mk`
  seperti yang terlihat pada baris berikut ini:
@@ -136,15 +136,13 @@ TARGET_BOARD_PLATFORM_GPU := qcom-adreno512
 
 Sekarang, saya bisa memulai proses *building* dengan memberikan berikut ini:
 
-> $ <strong>. build/envsetup.sh</strong>
+> <strong>$</strong> <code>. build/envsetup.sh</code>
 
-> $ <strong>lunch omni_platina-eng</strong>
+> <strong>$</strong> <code>lunch omni_platina-eng</code>
 
-> $ <strong>export ALLOW_MISSING_DEPENDENCIES=true</strong>
+> <strong>$</strong> <code>export ALLOW_MISSING_DEPENDENCIES=true</code>
 
-
-> $ <strong>mka clean && mka -j12 recoveryimage</strong>
-
+> <strong>$</strong> <code>mka clean && mka -j12 recoveryimage</code>
 
 <div class="alert alert-info" role="alert">
 Bila terjadi kesalahan karena ada library yang belum ter-install di sistem operasi Linux yang dipakai, gunakan <code>sudo apt-get install</code> untuk meng-<em>install</em>
@@ -155,12 +153,12 @@ Setelah proses *building* selesai, saya dapat menguji image yang dihasilkan tanp
 sebelumnya, saya perlu masuk dulu ke dalam modus *bootloader* di perangkat saya.  Hal ini bisa dilakukan dengan mematikan perangkat dan menahan kombinasi 
 tombol *power* + *volume down* pada saat perangkat dinyalakan.  Setelah logo "fastboot" muncul, saya kemudian memberikan perintah berikut ini:
 
-> $ <strong>fastboot boot out/target/product/platina/recovery.img</strong>
+> <strong>$</strong> <code>fastboot boot out/target/product/platina/recovery.img</code>
 
 Sistem operasi TWRP yang saya *build* segera dijalankan.  Setelah memastikan tidak ada masalah, saya kemudian melakukan instalasi secara permanen ke partisi `recovery`
 dengan memberikan perintah berikut ini:
 
-> $ <strong>fastboot flash recovery out/target/product/platina/recovery.img</strong>
+> <strong>$</strong> <code>fastboot flash recovery out/target/product/platina/recovery.img</code>
 
 <div class="alert alert-info" role="alert">
 Karena sistem operasi <em>recovery</em> sangat sederhana dan jarang dipakai, saya tidak memindahkan semua <em>proprietary binaries</em> dari ROM resmi ke image TWRP 
