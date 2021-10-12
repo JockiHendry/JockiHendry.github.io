@@ -5,36 +5,42 @@ title: Tentang Saya
 
 <div class="container about">
 	<div class="row mb-3">
-		<p>
+		<p style="margin-left: auto; margin-right: auto;">
 			Jocki Hendry adalah seorang <em>full-stack software engineer</em> dengan <a href="https://en.wikipedia.org/wiki/T-shaped_skills" target="_blank">T-shaped skills</a>.  Fokus keahliannya adalah pemograman <em>back-end</em>.
 			<small><a href="mailto:owner@jocki.me">owner@jocki.me</a></small>
 		</p>
 	</div>
-	<div class="row mb-3">
-		<div class="card col-12 col-md-5 mr-3 mb-3 mb-md-0 box-shadow">
-			<div class="card-body">
-				<h5 class="card-title">Profil Saya</h5>
-				<ul class="profile">
-					<li><img src="{{ "/assets/images/icons/github.ico" }}" /><a href="https://github.com/JockiHendry" target="_blank">GitHub</a></li>
-					<li><img src="{{ "/assets/images/icons/so.ico" }}" /><a href="https://stackoverflow.com/story/jockihendry" target="_blank">Stackoverflow Developer Story</a></li>
-					<li><img src="{{ "/assets/images/icons/qwiklabs.ico" }}" /><a href="https://www.cloudskillsboost.google/public_profiles/92adcd2e-7812-483f-9a14-3075a01d6273" target="_blank">Google Qwiklabs</a></li>
-				</ul>
+	<div class="d-flex flex-column">
+		<div class="d-flex flex-md-row flex-column mb-3 justify-content-center">
+			<div class="card box-shadow col-md-7 mr-md-1 mb-3 mb-md-0 col-12">
+				<div class="card-body">
+					<div id="tags-cloud-container" style="height: 100%;"></div>
+				</div>
 			</div>
-		</div>	
-		<div class="card col-12 col-md box-shadow">
-			<div class="card-body">
-				<h5 class="card-title">Keahlian Saya</h5>
-				<div id="category-container"></div>
-			</div>
-		</div>	
-	</div>
-	<div class="row">
-		<div class="card col-12 box-shadow">
-			<div class="card-body">		
-				<h5 class="card-title">Minat Saya</h5>
-				<div id="tags-cloud-container"></div>		
+			<div class="d-flex flex-column col-md-4 col-12">
+				<div class="card mb-3 box-shadow">
+					<div class="card-body">
+						<h5 class="card-title">Profil Saya</h5>
+						<ul class="profile">
+							<li><img src="{{ "/assets/images/icons/github.ico" | relative_url }}" /><a href="https://github.com/JockiHendry" target="_blank">GitHub</a></li>
+							<li><img src="{{ "/assets/images/icons/so.ico" | relative_url }}" /><a href="https://stackoverflow.com/story/jockihendry" target="_blank">Stackoverflow Developer Story</a></li>
+							<li><img src="{{ "/assets/images/icons/qwiklabs.ico" | relative_url }}" /><a href="https://www.cloudskillsboost.google/public_profiles/92adcd2e-7812-483f-9a14-3075a01d6273" target="_blank">Google Qwiklabs</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="card box-shadow">
+					<div class="card-body">
+						<div id="category-container"></div>
+					</div>
+				</div>
 			</div>
 		</div>
+		<div class="d-flex flex-md-row flex-column flex-md-wrap justify-content-center">
+			<img src="{{ "/assets/images/roleiq/google_cloud_architect.png" | relative_url }}" class="mb-3 img-fluid p-2" />
+			<img src="{{ "/assets/images/roleiq/security_analyst.png" | relative_url }}" class="mb-3 img-fluid p-2" />
+			<img src="{{ "/assets/images/roleiq/angular_web_developer.png" | relative_url }}" class="mb-3 img-fluid p-2" />
+		</div>
+
 	</div>
 </div>
 <script src="{{ "/assets/highcharts.js" | relative_url }}"></script>
@@ -90,7 +96,7 @@ title: Tentang Saya
 			name: 'Jumlah Artikel',
 			placementStrategy: 'center',
 			spiral: 'archimedean'
-		}],	
+		}],
 		title: {
 			text: '',
 		},
@@ -102,5 +108,8 @@ title: Tentang Saya
 <style>
 	body {
 		background-color: #eee;
+	}
+	main.container, .container .about {
+		max-width: 100vw !important;
 	}
 </style>
