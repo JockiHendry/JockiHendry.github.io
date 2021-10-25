@@ -46,64 +46,71 @@ title: Tentang Saya
 <script src="{{ "/assets/highcharts.js" | relative_url }}"></script>
 <script src="{{ "/assets/wordcloud.js" | relative_url }}"></script>
 <script>
-	Highcharts.chart('category-container', {
-		series: [{
-			name: 'Jumlah Artikel',
-			colorByPoint: true,
-			data: [
-				{%- for category in site.categories -%}
-					{
-						name: '{{ category[0] }}',
-						y: {{ category[1].size }},
-					},
-				{%- endfor -%}
-			]
-		}],
-		plotOptions: {
-			pie: {
-				allowPointSelect: true,
-				cursor: 'pointer',
-			}
-		},
-		chart: {
-			type: 'pie',
-		},
-		title: {
-			text: '',
-		},
-		credits: {
-			enabled: false,
-		}
-	});
-
-	Highcharts.chart('tags-cloud-container', {		
-		series: [{
-			cursor: 'pointer',
-			events: {
-				click: function(event) {
-					if (event.point && event.point.name) {					
-						window.open("/tag/" + event.point.name, '_blank');	
-					}
-					
+	(function() {
+		const chart1 = Highcharts.chart('category-container', {
+			series: [{
+				name: 'Jumlah Artikel',
+				colorByPoint: true,
+				data: [
+					{%- for category in site.categories -%}
+						{
+							name: '{{ category[0] }}',
+							y: {{ category[1].size }},
+						},
+					{%- endfor -%}
+				]
+			}],
+			plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
 				}
 			},
-			type: 'wordcloud',			
-			data: [			
-				{%- for tag in site.tags -%}
-					['{{ tag[0] }}', {{ tag[1].size }}],
-				{%- endfor -%}
-			],				
-			name: 'Jumlah Artikel',
-			placementStrategy: 'center',
-			spiral: 'archimedean'
-		}],
-		title: {
-			text: '',
-		},
-		credits: {
-			enabled: false,
+			chart: {
+				type: 'pie',
+			},
+			title: {
+				text: '',
+			},
+			credits: {
+				enabled: false,
+			}
+		});
+
+		const chart2 = Highcharts.chart('tags-cloud-container', {
+			series: [{
+				cursor: 'pointer',
+				events: {
+					click: function(event) {
+						if (event.point && event.point.name) {
+							window.open("/tag/" + event.point.name, '_blank');
+						}
+
+					}
+				},
+				type: 'wordcloud',
+				data: [
+					{%- for tag in site.tags -%}
+						['{{ tag[0] }}', {{ tag[1].size }}],
+					{%- endfor -%}
+				],
+				name: 'Jumlah Artikel',
+				placementStrategy: 'center',
+				spiral: 'archimedean'
+			}],
+			title: {
+				text: '',
+			},
+			credits: {
+				enabled: false,
+			}
+		});
+
+		window.onload = () => {
+			chart1.reflow();
+			chart2.reflow();
 		}
-	});
+	})();
 </script>
 <style>
 	body {
