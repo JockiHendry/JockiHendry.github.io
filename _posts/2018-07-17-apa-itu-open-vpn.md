@@ -40,12 +40,16 @@ Perintah di atas akan menghasilkan sertifikat CA pada lokasi `pki/ca.crt`.
 Sekarang, saatnya menghasilkan sertifikat untuk *server* dan *client* yang di-*sign* oleh sertifikat CA tersebut dengan perintah:
 
 
-> <strong>$</strong> <code>./easyrsa build-server-full server</code>
+> <strong>$</strong> <code>./easyrsa build-server-full server nopass</code>
 
 > <strong>$</strong> <code>./easyrsa build-client-full client</code>
 
 
 Sertifikat untuk *server* akan dihasilkan di `pki/issued/server.crt` dan sertifikat untuk *client* dapat dijumpai di `pki/issued/client.crt`.
+
+<div class="alert alert-warning" role="alert">
+<strong>PERINGATAN:</strong> Bila mengaktifkan <code>remote-cert-tls server|client</code> di konfigurasi OpenVPN untuk mencegah serangan <em>Man-In-The-Middle</em> (MITM), saya menemukan bahwa sertifikat yang dihasilkan akan gagal saat dipakai dengan pesan kesalahan seperti <strong>unsupported certificate purpose</strong> sebelum <strong>TLS Error: TLS key negotiation failed</strong>.  Sebagai solusinya, saya menggunakan perintah <code>./easyrsa gen-req</code> dan <code>./easyrsa sign-req server|client</code> untuk menghasilan sertifikat secara terpisah.  
+</div>
 
 Berikutnya, saya membuat Diffie-Hellman (DH) key dengan memberikan perintah berikut ini:
 
