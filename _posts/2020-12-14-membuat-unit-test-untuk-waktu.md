@@ -2,7 +2,7 @@
 layout: post
 category: Pemograman
 title: Membuat Unit Test Yang Melibatkan Waktu
-tags: [JavaScript]
+tags: [Node]
 ---
 
 Pada suatu hari, saya ingin membuat *unit test* untuk menguji kode program yang menggunakan `setInterval()`.  Bagaimana caranya

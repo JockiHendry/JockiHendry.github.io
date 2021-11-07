@@ -2,7 +2,7 @@
 layout: post
 category: Pemograman
 title: Event Loop Di Node.js
-tags: [JavaScript]
+tags: [Node]
 ---
 
 Walaupun Node.js tidak mendukung *multi-threading*, ia memiliki implementasi *event loop* untuk mengerjakan kode program secara 

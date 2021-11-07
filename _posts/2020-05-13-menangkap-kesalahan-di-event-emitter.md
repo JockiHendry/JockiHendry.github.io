@@ -2,7 +2,7 @@
 layout: post
 category: Pemograman
 title: Menangkap Kesalahan Saat Menggunakan EventEmitter
-tags: [JavaScript, TypeScript]
+tags: [Node, TypeScript]
 ---
 
 `EventEmitter` merupakan salah satu class penting di Node.js untuk pekerjaan *asynchronous* berbasis *event*.  Salah satu contoh penggunaannya yang paling 
