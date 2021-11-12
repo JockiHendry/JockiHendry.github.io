@@ -51,6 +51,19 @@ code {
 	font-size: 100%;
 }
 
+.diagram {
+	&:first-line {
+		line-height: 0;
+	}
+	font-family: 'Cousine', monospace;
+	font-size: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	white-space: pre;
+	line-height: 1.2em;
+	color: black;
+}
+
 .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
 
 .muted-link {	

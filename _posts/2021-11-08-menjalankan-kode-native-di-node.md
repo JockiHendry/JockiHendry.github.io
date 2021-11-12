@@ -69,7 +69,7 @@ NAPI_MODULE(NODE_GYP_MODULE_NAME, Init);
 Pada kode program C di atas, saya menggunakan Node-API yang menyediakan abstraksi untuk dalam berinteraksi dengan JavaScript (runtime V8). 
 Salah satu tujuan dari Node-API adalah untuk menghindari perubahan di kode program C setiap kali terjadi perubahan Node.js (saat versi baru dirilis).  Sebagai contoh,
 pada kode program di atas, saya menggunakan `napi_value` untuk mewakili nilai di JavaScript, menggunakan `napi_get_value_string_utf8` untuk mengubah string yang
-dikirim dari JavaScript menjadi `char*` (*string* di C) yang dapat dipakai di kode program C. Untuk informasi lebih lanjut mengenai apa saja yang disediakan oleh Node-API, saya dapat membaca dokumentasi Node.js di bagian [C/C++ addons with Node-API](https://nodejs.org/dist/latest-v17.x/docs/api/n-api.html).
+dikirim dari JavaScript menjadi `char*` (*string* di C) yang dapat dipakai di kode program C. Untuk informasi lebih lanjut mengenai apa saja yang disediakan oleh Node-API, saya dapat membaca dokumentasi Node.js di bagian [C/C++ addons with Node-API](https://nodejs.org/api/n-api.html).
 
 Bagian yang paling pertama kali dikerjakan di kode program C di atas adalah `NAPI_MODULE` yang mendaftarkan *module* dengan me-referensi-kan *function* `Init`. Ini
 menyebabkan *function* `Init` akan dikerjakan saat kode program JavaScript melakukan `require()` *module* ini.  Pada *function* `Init`, saya mendaftarkan sebuah method yang dapat dipanggil di JavaScript dengan nama `tampilkan()`.  Bila method ini dipanggil di JavaScript, maka *function* `Tampilkan` di C akan dikerjakan. Kode program 

@@ -9,7 +9,7 @@ Hari ini saya kembali menemukan sesuatu yang secara konseptual seharusnya mudah 
 
 Untuk menunjukkan permasalahan ini, saya membuat sebuah monorepo sederhana yang berisi 3 subproyek: `serverless-app1`, `serverless-app2` dan `shared`.  Struktur direktorinya terlihat seperti berikut ini:
 
-```
+<div class="diagram">
 . monorepo
 ├── serverless-app1  
 │   └── functions    
@@ -28,7 +28,7 @@ Untuk menunjukkan permasalahan ini, saya membuat sebuah monorepo sederhana yang 
     │   └── util.ts
     ├── package.json      
     └── tsconfig.json  
-```
+</div>
 
 File `util.ts` di subproyek `shared` berisi kode program yang bisa dipakai ulang di subproyek lainnya:
 
@@ -56,7 +56,7 @@ export const app1 = functions.https.onRequest((request, response) => {
 
 Memakai ulang kode program seperti ini sebenarnya tidak masalah karena Node.js mendukung `import` dari folder mana saja.  Untuk membuktikannya, bila saya mengerjakan `npm run build`, kode program berhasil dikompilasi tanpa pesan kesalahan.  Hasil kompilasi di folder `lib` terlihat seperti:
 
-```
+<div class="diagram">
 . lib
 ├── serverless-app1
 │   └── functions
@@ -65,7 +65,7 @@ Memakai ulang kode program seperti ini sebenarnya tidak masalah karena Node.js m
 └── shared
     └── src
         └── util.js
-```
+</div>
 
 Bila saya membandingkan nilai `main` di `package.json` yang berupa `"lib/index.js"`, terlihat bahwa struktur proyek yang dihasilkan tidak sesuai dengan yang dibutuhkan.  Ini menyebabkan `firebase deploy` akan gagal dengan pesan kesalahan seperti **functions/lib/index.js does not exists, can't deploy Cloud Functions**.
 
