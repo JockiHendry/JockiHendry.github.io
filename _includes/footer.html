@@ -19,7 +19,7 @@
   <script src="{{ "/assets/algoliasearch.min.js" | relative_url }}"></script>
   <script src="{{ "/assets/autocomplete.jquery.min.js" | relative_url }}"></script>
 
-  <script>      
+  <script>
       var client = algoliasearch('{{ site.algolia.application_id }}', '{{ site.algolia.api_key }}');
       var index = client.initIndex('{{ site.algolia.index_name }}');
       $('#search-input').autocomplete({ 
@@ -55,6 +55,19 @@
         window.addEventListener('load', function () {
           navigator.serviceWorker.register('/sw.js').then((registration) => {                      
             console.log('Service worker registered for the following scope: ', registration.scope);
+            if (registration.active) {
+              registration.active.addEventListener('statechange', (e) => {
+                const swState = e.target.state;
+                if (swState === 'redundant') {
+                  $("#update-toast").addClass('d-none');
+                  $("#updated-toast").removeClass('d-none');
+                }
+              });
+            }
+            registration.onupdatefound = () => {
+              $('#updated-toast').addClass('d-none');
+              $("#update-toast").removeClass('d-none');
+            }
           }, function(err) {
             console.error('Fail to register service worker', err);
           });
