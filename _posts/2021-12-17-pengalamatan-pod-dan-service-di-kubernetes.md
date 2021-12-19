@@ -232,6 +232,38 @@ Hasil di atas juga menunjukkan adanya *hop* tambahan karena ini melibatkan jarin
 
 Sekarang saya sudah berhasil membuat dua *pod* saling berkomunikasi. Lalu, bagaimana caranya supaya *pod* tersebut dapat diakses oleh pihak luar?  Tidak ada gunanya membuat sebuah aplikasi yang hanya berkomunikasi secara internal namun tidak dapat dipanggil oleh pengguna, bukan?  Untuk mejawab pertanyaan ini, Kubernetes memiliki apa yang disebut sebagai *service*.
 
+Sebelum menggunakan *service*, pada kasus tertentu yang sangat jarang terjadi, *pod* dapat menggunakan jaringan di *node* secara langsung dengan mengisi nilai `hostNetwork` dengan `true` seperti pada konfigurasi berikut ini:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: p1
+spec:
+  restartPolicy: Never
+  hostNetwork: true
+  containers:
+    - image: nginx
+      name: nginx
+      ports:
+        - containerPort: 80
+```
+
+Bila saya memberikan perintah berikut ini:
+
+> <strong>$</strong> <code>kubectl get pods -o wide</code>
+
+```
+NAME   READY   STATUS    RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+p1     1/1     Running   0          50s   192.168.49.3   minikube-m02   <none>           <none>
+```
+
+Saya dapat melihat bahwa *pod* tersebut dapat diakses melalui IP *node* (`192.168.49.3`) secara langsung.  Bila saya memberikan perintah `curl 192.168.49.3` dari komputer *host*, saya dapat langsung mengakses NGINX di *pod* tersebut.  Cara ini adalah cara paling singkat untuk membiarkan sebuah *pod* dapat diakses secara langsung, namun juga merupakan cara yang paling berbahaya dan sebaiknya dihindari kecuali pada kasus-kasus tertentu.
+
+<div class="alert alert-danger" role="alert">
+<strong>PENTING:</strong>  Sebuah <em>pod</em> yang menggunakan <em>host network</em> dapat melihat aktifitas jaringan di <em>node</em> tersebut termasuk melihat komunikasi yang terjadi pada <em>pod</em> lain yang juga berada di <em>node</em> yang sama.  Dengan kata lain, dari sisi jaringan, <em>pod</em> tersebut tidak lagi berada dalam <em>container</em>.  Ini cukup berbahaya bila dilihat dari sisi keamanan komputer.
+</div>
+
 ### Service
 
 Untuk membuktikan bahwa *pod* tidak memiliki alamat yang tetap, saya akan me-*restart* minikube dengan `minikube stop` dan `minikube start`.  Karena tidak ada *deployment* yang berusaha membuat ulang *pod*, saya akan menemukan *pod* saya berada dalam status `Completed`.  Saya kemudian membuat ulang *pod* dengan perintah seperti:
