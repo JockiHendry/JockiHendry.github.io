@@ -425,7 +425,18 @@ Pada saat mengakses `192.168.49.2`,  *request* akan diarahkan ke *pod* `p3`.  Se
 http://192.168.49.2:31686
 ```
 
-Tapi bukankah ini sama saja seperti permasalahan di *pod* hanya saya penerapannya kini di *node*?  Walaupun *node* lebih kekal dibandingkan dengan *pod*, akan sangat merepotkan bila pemanggil harus tahu alamat IP seluruh *node* yang ada dan apa saja *service* yang tersedia di masing-masing *node* tersebut.  `NodePort` berguna untuk *troubleshooting*, sementara tipe yang lebih disarankan untuk mempublikasikan *service* adalah `LoadBalancer`.  *Service* dengan tipe `LoadBalancer` akan dipublikasikan oleh *load balancer* eksternal yang tidak dikelola oleh Kubernetes.  *Load balancer* ini bisa berbeda-beda tergantung pada instalasi Kubernetes yang dipakai.
+`NodePort` akan mempublikasikan informasi *service* tersebut ke seluruh *node* yang ada.  Setiap *service* akan diasosiasikan dengan *port* tertentu (secara default mulai dari *port* 30000 sampai 32767) di seluruh *node* yang ada.  Sebagai contoh, bila saya mendeklarasikan dua *pod* NGINX yang memakai *port* 80 secara internal, versi *service* `NodePort` untuk kedua *pod* tersebut akan terlihat seperti:
+
+> <strong>$</strong> <code>kubectl get services</code>
+
+```
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1        <none>        443/TCP        23m
+service1     NodePort    10.104.155.201   <none>        80:30971/TCP   10m
+service2     NodePort    10.99.118.194    <none>        80:31166/TCP   10m
+```
+
+Untuk mengakses *service* di atas, saya dapat menggunakan alamat `http://<ipnode>:30971` untuk *service1* dan `http://<ipnode>:31166` untuk *service2*.  Saya dapat menggunakan IP *node* apa saja karena `NodePort` dipublikasikan ke seluruh *node* yang ada.  Bila saya mengakses IP untuk *node1* dan ternyata *pod* tujuan saya tidak ada disana, *request* akan diteruskan ke *node* yang mengandung *pod* tujuan tersebut.  Salah satu kelemahannya adalah bila *node1* mengalami masalah dan aplikasi klien hanya akan memanggil IP *node1*, maka seluruh *service* tidak akan bisa diakses.  Salah solusi untuk mengatasi masalah tersebut adalah dengan membuat *service* dengan tipe `LoadBalancer`.  *Service* `LoadBalancer` membutuhkan sebuah *load balancer* eksternal yang tidak dikelola oleh Kubernetes.  *Load balancer* ini bisa berbeda-beda tergantung pada instalasi Kubernetes yang dipakai, namun tugasnya selalu sama: mendistribusikan *request* langsung ke *node* yang memiliki *pod* tujuan.
 
 Saya bisa membuat *service* dengan tipe `LoadBalancer` dengan menggunakan perintah seperti berikut ini:
 
