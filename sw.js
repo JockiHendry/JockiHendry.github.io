@@ -5,7 +5,7 @@ const install = async () => {
 	const cache = await caches.open('blog-{{ site.github.build_revision }}');
 	const requests = [
 		{% for page in site.pages %}
-		{%- if page.url != '/sw.js' and page.url != '/feed.xml' -%}
+		{%- if page.url != '/sw.js' and page.url != '/feed.xml' and page.url != '/sitemap.xml' -%}
 		'{{ page.url | remove: '.html' }}',
 		{%- endif -%}
 		{% endfor %}
@@ -41,12 +41,7 @@ const fetchCache = async (request) => {
 			return withSlash;
 		}
 	}
-	const newResponse = await fetch(request);
-	if (!newResponse || newResponse.status > 200 || request.method !== 'GET') {
-		return newResponse;
-	}
-	await cache.put(request, newResponse.clone());
-	return newResponse;
+	return await fetch(request);
 }
 
 self.addEventListener('install', (e) => {
