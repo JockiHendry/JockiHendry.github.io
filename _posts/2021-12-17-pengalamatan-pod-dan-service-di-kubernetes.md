@@ -97,6 +97,10 @@ The Pod "p1" is invalid: spec.containers: Forbidden: pod updates may not add or 
 
 Ini menunjukkan bahwa struktur *container* di dalam *pod* sulit untuk berubah lagi.  Bila *container* tambahan memiliki fungsi yang jauh berbeda dari yang sudah ada di *pod*, sangat disarankan untuk membuat *pod* baru yang berisi *container* tersebut.  Ini akan membuat pengelolaan *container* tersebut menjadi lebih mudah.  Lalu, pada kasus seperti apa sebuah *pod* disarankan untuk memiliki lebih dari satu *container*?  Biasanya *container* tambahan di *pod* berhubungan dengan jaringan seperti *proxy* dan sebagainya.  Sebagai contoh, *container* `amazon-ecs-network-sidecar` yang hendak saya tambahkan adalah sebuah *container* yang berisi perintah seperti `traceroute`, `ifconfig`, dan sebagainya yang sangat membantu dalam *troubleshooting* jaringan.  Perintah tersebut tidak tersedia di *container* `nginx` karena *container* `nginx` berdasarkan `debian:slim` yang menghilangkan banyak file dan aplikasi yang tidak dibutuhkan.  Tujuannya supaya ukuran kecil dan *container* juga tidak berat.  Tentu saja saya juga bisa masuk ke dalam *container* dan memberikan perintah seperti `apt update` dan `apt install`, tapi ini akan men-"cemari" *container* tersebut.
 
+<div class="alert alert-info" role="alert">
+<strong>TIPS:</strong> Solusi lainnya adalah dengan menggunakan <em>ephemeral container</em> dengan memberikan perintah seperti <code>kubectl debug -it p1 --image=busybox --target=p1</code>.  Namun pada saat tulisan ini dibuat, fitur ini masih beta dan perlu diaktifkan melalui <em>feature gates</em>.  Sebagai contoh, di minikube, ini bisa dilakukan dengan memberikan perintah <code>minikube start --feature-gates=EphemeralContainers=true</code>.
+</div>
+
 Karena tidak bisa menambah *container* baru melalui perintah `kubectl`, saya akan melakukannya melalui file *manifest*  seperti `latihan.yaml` yang memiliki isi:
 
 ```yaml
@@ -192,13 +196,10 @@ spec:
       image: nginx
     - name: p3-c2
       image: amazon/amazon-ecs-network-sidecar
-  nodeSelector:
-    name: latihan
+  nodeName: latihan
 ```
 
-Pada deklarasi `p3` di atas, saya menambahkan `nodeSelector` sehingga *pod* ini hanya akan di-*deploy* di *node* yang memiliki *label* `name` dengan nilai `latihan`.  Untuk menambahkan *label* ke sebuah *node* dan membuat `p3`, saya menggunakan perintah berikut ini:
-
-> <strong>$</strong> <code>kubectl label nodes latihan name=latihan</code>
+Pada deklarasi `p3` di atas, saya menggunakan `nodeName` sehingga *pod* baru ini hanya akan di-*deploy* di *node* yang memiliki nama `latihan` (ini adalah *node* pertama).  Untuk membuat *pod* baru tersebut, saya memberikan perintah berikut ini:
 
 > <strong>$</strong> <code>kubectl apply -f latihan.yaml</code>
 
@@ -224,7 +225,7 @@ traceroute to 10.244.103.3 (10.244.103.3), 30 hops max, 60 byte packets
  3  10.244.103.3 (10.244.103.3)  0.067 ms  0.035 ms  0.031 ms
 ```
 
-Hasil di atas juga menunjukkan adanya *hop* tambahan karena ini melibatkan jaringan yang berbeda yang berada di komputer berbeda (walaupun *virtual* bila dijalankan di minikube). 
+Hasil di atas juga menunjukkan adanya *hop* tambahan karena ini melibatkan jaringan yang berbeda yang berada di komputer berbeda (walaupun *virtual* bila dijalankan di minikube).  *Pod* yang berada di *node* berbeda akan diakses melalui *tunnel interface* `tunl0` yang telah dipersiapkan oleh Calico.  `tunl0` menggunakan jenis *tunnel* yang disebut sebagai *IP over IP tunnel* (IPIP tunnel).
 
 <div class="alert alert-warning" role="alert">
 <strong>PENTING:</strong> Pada kasus nyata, gunakan <em>deployment</em> dan/atau <em>service</em> untuk mengelola <em>pod</em>.  <em>Pod</em> memiliki siklus hidup yang singkat.  Mereka tidak permanen, dapat dilenyapkan dan dibuat baru sesuai kebutuhan Kubernetes (misalnya karena operasi <em>scaling down</em> atau ada <em>node</em> yang rusak).  Setiap kali <em>pod</em> baru dibuat, <em>pod</em> tersebut akan memiliki IP berbeda.
@@ -325,8 +326,7 @@ spec:
       image: nginx
     - name: p3-c2
       image: amazon/amazon-ecs-network-sidecar
-  nodeSelector:
-    name: latihan
+  nodeName: latihan
 ---
 apiVersion: v1
 kind: Service
@@ -375,7 +375,39 @@ Ini adalah p3
 Ini adalah p1
 ```
 
-Terlihat bahwa DNS yang dipakai oleh Kubernetes kini mendaftarkan `s1` yang merujuk ke alamat IP untuk *service* tersebut.  *Service* juga berperan sebagai *load balancer*.  Bila saya mengerjakan perintah `curl` di atas berulang kali, terkadang ia akan merujuk ke *pod* `p1` dan terkadang merujuk ke `p3`.  Dengan demikian, di aplikasi yang harus memanggil `p1` atau `p3`, saya tidak perlu menggunakan alamat IP `p1` dan `p3` secara langsung, melainkan cukup menggunakan `s1`.
+Mengapa DNS bisa mengenali nama `s1`?  Bila saya masuk ke salah satu *pod* dengan `kubectl exec -- bash` dan melihat DNS yang dipakai dengan memberikan perintah `cat /etc/resolv.conf`, saya akan menemukan baris seperti `nameserver` yang merujuk ke CoreDNS.  Berkat bantuan CoreDNS, nama seperti `s1` akan diterjemahkan menjadi cluster IP `10.108.241.53`.  Lalu, bagaimana IP `10.108.241.53` bisa berubah menjadi IP untuk `p1` atau `p3`?  Pada saat melakukan *request* keluar ke `10.108.241.53`, akan ada operasi DNAT, seperti yang ditunjukkan pada perintah berikut ini (dari *container* yang mewakili sebuah *node*):
+
+> <strong>$</strong> <code>sudo iptables -t nat -L</code>
+
+```
+Chain KUBE-SERVICES (2 references)
+target     prot opt source               destination         
+...
+KUBE-SVC-WXDZ2HVMUQ5BIO6Q  tcp  --  anywhere             10.108.241.53       /* default/s1 cluster IP */ tcp dpt:http
+...
+Chain KUBE-SVC-WXDZ2HVMUQ5BIO6Q (1 references)
+target     prot opt source               destination         
+KUBE-MARK-MASQ  tcp  -- !10.244.0.0/16        10.108.241.53       /* default/s1 cluster IP */ tcp dpt:http
+KUBE-SEP-4KQ27AGTZ3LSVQQF  all  --  anywhere             anywhere             /* default/s1 */ statistic mode random probability 0.50000000000
+KUBE-SEP-7GPWQRIYTMYP5CKW  all  --  anywhere             anywhere             /* default/s1 */
+...
+Chain KUBE-SEP-4KQ27AGTZ3LSVQQF (1 references)
+target     prot opt source               destination         
+KUBE-MARK-MASQ  all  --  10.244.103.4         anywhere             /* default/s1 */
+DNAT       tcp  --  anywhere             anywhere             /* default/s1 */ tcp to:10.244.103.8:80
+...
+Chain KUBE-SEP-7GPWQRIYTMYP5CKW (1 references)
+target     prot opt source               destination         
+KUBE-MARK-MASQ  all  --  10.244.103.6         anywhere             /* default/s1 */
+DNAT       tcp  --  anywhere             anywhere             /* default/s1 */ tcp to:10.244.255.8:80
+...
+```
+
+Terlihat pada konfigurasi di atas, Kubernetes menggunakan `-m statistic --mode random --probability 0.5` di iptables untuk menerjemahkan `10.108.241.53` menjadi salah satu dari `10.244.103.8` atau `10.244.255.8` (dimana masing-masing memiliki peluang 50%) untuk membuat sebuah *load balancer* sederhana.  Hal ini teruji pada saat saya mengerjakan perintah `curl` secara berulang kali, dimana terkadang hasilnya merujuk pada *pod* `p1` dan terkadang merujuk ke `p3`.  Dengan demikian, di aplikasi yang harus memanggil `p1` atau `p3`, saya tidak perlu menggunakan alamat IP `p1` dan `p3` secara langsung, melainkan cukup menggunakan `s1`.
+
+<div class="alert alert-info" role="alert">
+<strong>TIPS:</strong> Terlihat bahwa Kubernetes sebenarnya bukan sesuatu yang "baru".  Sama seperti Docker, Kubernetes menggunakan apa yang sudah di Linux dan membuatnya standar.  Karena fitur seperti iptables sudah lama ada dan stabil, ini adalah lebih baik daripada membuat sesuatu yang baru. Di Kubernetes, saya hanya perlu mengenali konsep ini sebagai <em>service</em> saja dan memakainya dengan <code>kubectl</code> tanpa harus menyentuh iptables.  Instalasi <em>cluster</em> Kubernetes dengan CNI berbeda bisa saja implementasi-nya tidak menggunakan iptables, namun konsep seperti <em>service</em> tetap sama.    
+</div>
 
 Bila saya menghapus dan membuat ulang `p1` dan `p3`, saya akan menemukan bahwa nilai IP untuk `s1` akan diperbaharui sesuai secara otomatis sesuai dengan IP terbaru dari `p1` dan `p3` seperti yang terlihat pada percobaan berikut ini:
 
