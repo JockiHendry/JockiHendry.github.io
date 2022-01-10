@@ -2,7 +2,7 @@
 layout: post
 category: DevOps
 title: Melakukan Load Testing Dengan Locust
-tags: [Python, Kubernetes]
+tags: [Python]
 ---
 
 Bila bicara soal *load testing*, yang terbayang dalam kepala saya adalah [Apache JMeter](https://jmeter.apache.org/).  Namun kali ini saya akan mencoba sebuah *tool* baru yang disebut [Locust](https://locust.io).  Salah satu perbedaan utamanya adalah definisi tugas pengujian JMeter dilakukan melalui UI sementara definisi pengujian Locust ditulis melalui kode program Python.  Mana yang sebenarnya lebih mudah dan intuitif?  Secara logika, seharusnya JMeter, bukan?  Tapi entah mengapa saya merasa banyak yang butuh waktu untuk mempelajari UI JMeter sebelum bisa mulai bekerja dengannya.  Sementara itu, karena skenario Locust adalah kode program Python, pembuat skenario bisa *copy paste* dan menerapkan teknik pemograman yang sudah biasa mereka pakai.
