@@ -29,7 +29,7 @@ Untuk mengaktifkan modus *promiscuous* secara manual (hal ini biasanya tidak per
 
 Untuk merekam paket tanpa menggunakan program eksternal, saya dapat menggunakan `tcpdump` bawaan Ubuntu dengan memberikan perintah seperti berikut ini:
 
-> <strong>$</strong> <code>sudo tcpdump eth0 -w capture.pcap</code>
+> <strong>$</strong> <code>sudo tcpdump -i eth0 -w capture.pcap</code>
 
 Perintah di atas akan merekam paket jaringan yang keluar masuk di perangkat `eth0` ke dalam sebuah file dengan nama `capture.pcap` hingga program `tcpdump` tersebut ditutup (misalnya dengan Ctrl+C).  File hasil rekaman tersebut menggunakan format PCAP Capture yang dapat dipakai oleh semua aplikasi yang menggunakan `libpcap`.  Ada dua variasi format PCAP bila dilihat dari *magic number*-nya: `0xA1B2C3D4` untuk versi dengan timestamp hingga mikrodetik dan `0xA1B23C4D` untuk versi dengan timestamp hingga nanodetik.  Untuk melihat jenis format PCAP untuk sebuah file hasil rekaman, saya dapat menggunakan perintah seperti berikut ini:
 
@@ -39,7 +39,7 @@ Perintah di atas akan merekam paket jaringan yang keluar masuk di perangkat `eth
 capture.pcap: pcap capture file, microsecond ts (little-endian) - version 2.4 (Ethernet, capture length 262144)
 ```
 
-Salah satu permasalahan pada perekaman paket jaringan adalah media penyimpanan yang cepat terpakai habis.  Sebagai contoh, bila saya memiliki trafik 10 MB/s secara konstant, perekaman selama 1 jam akan membutuhkan minimal 36 GB penyimpanan.  Sangat tidak realistis untuk merekam dan menyimpan seluruh paket jaringan selama bertahun-tahun.  Oleh sebab itu, untuk perekaman jangka panjang, saya dapat menggunakan tool seperti [Stenographer](https://github.com/google/stenographer).  Walaupun lebih kompleks dari `tcpdump` atau `netsniff-ng`, Stenographer akan mengelola hasil rekaman dan otomatis menghapus rekaman lama bila sudah mencapai batas penyimpanan yang sudah ditentukan.
+Salah satu permasalahan pada perekaman paket jaringan adalah media penyimpanan yang cepat terpakai habis.  Sebagai contoh, bila saya memiliki trafik 10 MB/s secara konstan, perekaman selama 1 jam akan membutuhkan minimal 36 GB penyimpanan.  Sangat tidak realistis untuk merekam dan menyimpan seluruh paket jaringan selama bertahun-tahun.  Oleh sebab itu, untuk perekaman jangka panjang, saya dapat menggunakan tool seperti [Stenographer](https://github.com/google/stenographer).  Walaupun lebih kompleks dari `tcpdump` atau `netsniff-ng`, Stenographer akan mengelola hasil rekaman dan otomatis menghapus rekaman lama bila sudah mencapai batas penyimpanan yang sudah ditentukan.
 
 Untuk melakukan instalasi Stenographer, saya dapat memberikan perintah berikut ini:
 
