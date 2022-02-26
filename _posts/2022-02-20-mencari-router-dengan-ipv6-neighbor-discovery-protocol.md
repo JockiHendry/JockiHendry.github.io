@@ -2,7 +2,7 @@
 layout: post
 category: Network
 title: Mencari Router Dengan IPv6 Neighbor Discovery Protocol
-tags: [Go]
+tags: [Go, Protocol]
 ---
 
 Seluruh perangkat yang terhubung ke jaringan yang sama secara langsung dapat berkomunikasi satu dengan lainnya.  Namun, untuk berkomunikasi dengan perangkat di segmen jaringan yang berbeda, perangkat harus melalui router terlebih dahulu.  Pada konfigurasi manual, pengguna bisa mengisi alamat IP router sebagai gateway.  Namun, hampir semua sistem operasi modern mendukung konfigurasi jaringan otomatis dimana perangkat bisa terhubung ke router tanpa harus tahu apa IP router tersebut.  Bagaimana cara kerjanya?
